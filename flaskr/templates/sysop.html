@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript">
+            function Upload() {
+                var fileUpload = document.getElementById("fileUpload");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (FileReader) != "undefined") {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var table = document.createElement("table");
+                            var rows = e.target.result.split("\n");
+                            for (var i = 0; i < rows.length; i++) {
+                                var cells = rows[i].split(",");
+                                if (cells.length > 1) {
+                                    var row = table.insertRow(-1);
+                                    for (var j = 0; j < cells.length; j++) {
+                                        var cell = row.insertCell(-1);
+                                        cell.innerHTML = cells[j];
+                                    }
+                                }
+                            }
+                            var dvCSV = document.getElementById("dvCSV");
+                            dvCSV.innerHTML = "";
+                            dvCSV.appendChild(table);
+                        }
+                        reader.readAsText(fileUpload.files[0]);
+                    } else {
+                        alert("This browser does not support HTML5.");
+                    }
+                } else {
+                    alert("Please upload a valid CSV file.");
+                }
+            }
+        </script>
+
+        <script>
+            function hideAll(){
+                var elements = document.getElementsByClassName("page");
+                for(var i = 0; i<elements.length; i++){
+                    elements[i].style.display = "none";
+                }
+            }
+            function loadUsers(){
+                hideAll();
+                document.getElementById("p1").style.display = "block";
+            }
+            function loadImport(){
+                hideAll();
+                document.getElementById("p3").style.display = "block";
+            }
+            function loadInput(){
+                hideAll();
+                document.getElementById("p2").style.display = "block";
+            }
+
+            function myFunction() {
+                var x = document.getElementById("myTopnav");
+                if (x.className == "topnav") {
+                    x.className += " responsive";
+                } else {
+                    x.className = "topnav";
+                }
+                var list = document.getElementById("listMenu");
+                list.style="block";
+            }
+    
+        
+        </script>
+        <link rel="stylesheet" href="../static/style.css">
+    </head>
+    <body>
+        <!-- header -->
+        <div class="row" style="background:#579a88; height: auto;">
+            <div class="col-1"></div>
+            <div class="col-6" style="align-items:center; padding: 10px;">
+                <img img src="../static/McGill-CS.png"  width="auto">
+            </div>
+            <div class="col-5" style="align-items:center; padding: 10px;">
+                <h1 style="color: white;">System Operator Tasks</h1>
+            </div>
+        </div>
+        <div class="row" style="background:#b2e1d4; height:auto">
+            <div class="col-1"></div>
+            <div class="col-10" style="align-items:center; padding: 10px;">
+                <a onclick="loadUsers()"><font size="4"><b>USERS&emsp;&emsp;</b></font></a>
+                <a onclick="loadImport()"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
+                <a onclick="loadInput()"><font size="4"><b>INPUT&emsp;&emsp;</b></font></a>
+            </div>
+        </div>
+        <br>
+        <!-- user management-->
+        <div class="page active" id="p1">
+        <div class="row" style="height:auto">
+            <div class="col-1"></div>
+            <div class="col-10"><h2>Users Management</h2></div>
+        </div>
+        <div class="row" style="height:auto">
+            <div class="col-1"></div>
+            <div class="col-10">
+            <form method="GET">
+                <table border="0">
+                    <tr>
+                        <td><label>Username:</label></td> 
+                        <td colspan="2"><input type="text" name="username"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Password:</label></td> 
+                        <td colspan="2"><input type="text" name="password"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Email:</label></td>
+                        <td colspan="2"><input type="text" name="email"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1">Login as:</td>
+                        <td colspan="2" style="padding: 15px;">
+                            <input type="radio" name="role" value="Student">Student
+                            <input type="radio" name="role" value="Prof">Prof
+                            <input type="radio" name="role" value="Sysop">Sysop 
+                            <input type="radio" name="role" value="Admin">Admin
+                            <input type="radio" name="role" value="TA">TA
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" name="edit" value="Edit"></td>
+                        <td><input type="submit" name="addUser" value="Add"></td>
+                        <td><input type="submit" name="remove" value="Remove"></td>
+                    </tr>
+                </table>
+            </form>
+            </div>
+        </div>
+        </div>
+        <!-- input profs and courses -->
+        <div class="page" id="p2">
+        <div class="row" style="height:auto">
+            <div class="col-1"></div>
+            <div class="col-10"><h2>Manually Input Profs and Courses Info.</h2></div>
+        </div>
+        <div class="row" style="height:auto">
+            <div class="col-1"></div>
+            <div class="col-10">
+            <form action="" method="get">
+                <table border="0">
+                    <tr>
+                        <td><label>Term Month Year:</label></td> 
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Course Number:</label></td> 
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Course Name:</label></td>
+                        <td colspan="2"><input type="text" name="course_name"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Instructor Assigned Name:</label></td>
+                        <td colspan="2"><input type="text" name="instructor_assigned_name"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" name="addCourse" value="Add"></td>
+                    </tr>
+                </table>
+            </form>
+            </div>
+        </div>
+        </div>
+        <!-- import csv file -->
+        <div class="page" id="p3">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>Import .csv File for Profs and Courses Info.</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <input type="file" id="fileUpload"/>
+                <input type="button" id="upload" value="Upload" onclick="Upload()" />
+                <hr/>
+                <div id="dvCSV"></div>
+            </div>
+        </div>
+        </div>
+        
+
+        <br><br><br>
+        <!-- footer -->
+        <div class="row footer">
+            <div class="col-1"></div>
+            <div class="col-7" style="padding-top: 15px;">
+                <a><b>Back to Dashboard</b></a>
+            </div>
+            <div class="col-3" style="align-items: center; padding: 10px;">
+                <font color="#b2e1d4" size="2">
+                    <div align="right">
+                        Copyright @ 2022.<br>
+                        All Rights Reserved.
+                    </div>
+                </font>
+            </div>
+        </div>
+    </body>
+</html>

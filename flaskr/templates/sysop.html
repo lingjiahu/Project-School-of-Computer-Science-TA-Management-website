@@ -2,39 +2,6 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <script type="text/javascript">
-            function Upload() {
-                var fileUpload = document.getElementById("fileUpload");
-                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
-                if (regex.test(fileUpload.value.toLowerCase())) {
-                    if (typeof (FileReader) != "undefined") {
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            var table = document.createElement("table");
-                            var rows = e.target.result.split("\n");
-                            for (var i = 0; i < rows.length; i++) {
-                                var cells = rows[i].split(",");
-                                if (cells.length > 1) {
-                                    var row = table.insertRow(-1);
-                                    for (var j = 0; j < cells.length; j++) {
-                                        var cell = row.insertCell(-1);
-                                        cell.innerHTML = cells[j];
-                                    }
-                                }
-                            }
-                            var dvCSV = document.getElementById("dvCSV");
-                            dvCSV.innerHTML = "";
-                            dvCSV.appendChild(table);
-                        }
-                        reader.readAsText(fileUpload.files[0]);
-                    } else {
-                        alert("This browser does not support HTML5.");
-                    }
-                } else {
-                    alert("Please upload a valid CSV file.");
-                }
-            }
-        </script>
 
         <script>
             function hideAll(){
@@ -75,9 +42,10 @@
         <!-- header -->
         <div class="row" style="background:#579a88; height: auto;">
             <div class="col-1"></div>
-            <div class="col-6" style="align-items:center; padding: 10px;">
-                <img img src="../static/McGill-CS.png"  width="auto">
+            <div class="col-5" style="align-items:center; padding: 10px;">
+                <img img src="../static/McGill-CS.png" width="auto" height="auto">
             </div>
+            <div class="col-1"></div>
             <div class="col-5" style="align-items:center; padding: 10px;">
                 <h1 style="color: white;">System Operator Tasks</h1>
             </div>
@@ -85,9 +53,9 @@
         <div class="row" style="background:#b2e1d4; height:auto">
             <div class="col-1"></div>
             <div class="col-10" style="align-items:center; padding: 10px;">
-                <a onclick="loadUsers()"><font size="4"><b>USERS&emsp;&emsp;</b></font></a>
-                <a onclick="loadImport()"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
-                <a onclick="loadInput()"><font size="4"><b>INPUT&emsp;&emsp;</b></font></a>
+                <a onclick="loadUsers()"><font size="4"><b>Users&emsp;&emsp;</b></font></a>
+                <a onclick="loadImport()"><font size="4"><b>Import&emsp;&emsp;</b></font></a>
+                <a onclick="loadInput()"><font size="4"><b>Input&emsp;&emsp;</b></font></a>
             </div>
         </div>
         <br>
@@ -100,8 +68,20 @@
         <div class="row" style="height:auto">
             <div class="col-1"></div>
             <div class="col-10">
-            <form method="GET">
+            <form method="POST">
                 <table border="0">
+                    <tr>
+                        <td><label>Firstname:</label></td> 
+                        <td colspan="2"><input type="text" name="firstname"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Lastname:</label></td> 
+                        <td colspan="2"><input type="text" name="lastname"></td>
+                    </tr>
+                    <tr>
+                        <td><label>StudentID:</label></td> 
+                        <td colspan="2"><input type="text" name="studentid"></td>
+                    </tr>
                     <tr>
                         <td><label>Username:</label></td> 
                         <td colspan="2"><input type="text" name="username"></td>
@@ -117,17 +97,22 @@
                     <tr>
                         <td colspan="1">Login as:</td>
                         <td colspan="2" style="padding: 15px;">
-                            <input type="radio" name="role" value="Student">Student
-                            <input type="radio" name="role" value="Prof">Prof
-                            <input type="radio" name="role" value="Sysop">Sysop 
-                            <input type="radio" name="role" value="Admin">Admin
-                            <input type="radio" name="role" value="TA">TA
+                            <input type="radio" name="role1" value="Student">
+                            <label for="Student">Student</label>
+                            <input type="radio" name="role2" value="Prof">
+                            <label for="Prof">Prof</label>
+                            <input type="radio" name="role3" value="Sysop"> 
+                            <label for="Sysop">Sysop</label>
+                            <input type="radio" name="role4" value="Admin">
+                            <label for="Admin">Admin</label>
+                            <input type="radio" name="role5" value="TA">
+                            <label for="TA">TA</label>
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="submit" name="edit" value="Edit"></td>
-                        <td><input type="submit" name="addUser" value="Add"></td>
-                        <td><input type="submit" name="remove" value="Remove"></td>
+                        <td><input type="submit" name="submit" value="Edit"></td>
+                        <td><input type="submit" name="submit" value="Add"></td>
+                        <td><input type="submit" name="submit" value="Remove"></td>
                     </tr>
                 </table>
             </form>
@@ -143,10 +128,10 @@
         <div class="row" style="height:auto">
             <div class="col-1"></div>
             <div class="col-10">
-            <form action="" method="get">
+            <form method="POST">
                 <table border="0">
                     <tr>
-                        <td><label>Term Month Year:</label></td> 
+                        <td><label>Term-Year:</label></td> 
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
                     <tr>
@@ -162,7 +147,8 @@
                         <td colspan="2"><input type="text" name="instructor_assigned_name"></td>
                     </tr>
                     <tr>
-                        <td><input type="submit" name="addCourse" value="Add"></td>
+                        <td></td>
+                        <td style="padding-top:20px;" align="right"><input type="submit" name="submit" value="Submit"></td>
                     </tr>
                 </table>
             </form>
@@ -180,14 +166,31 @@
         <div class="row">
             <div class="col-1"></div>
             <div class="col-10">
-                <input type="file" id="fileUpload"/>
-                <input type="button" id="upload" value="Upload" onclick="Upload()" />
+                <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUpload"/>
+                <input type="submit" name="submit" id="upload" value="Upload"/>
+                </form>
                 <hr/>
                 <div id="dvCSV"></div>
             </div>
         </div>
         </div>
         
+        <!-- error and success messages -->
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class=flashes>
+                    {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
 
         <br><br><br>
         <!-- footer -->

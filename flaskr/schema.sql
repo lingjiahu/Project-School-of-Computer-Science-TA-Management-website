@@ -15,8 +15,8 @@ CREATE TABLE userAccounts (
 );
 
 CREATE TABLE courses (
-    courseNum VARCHAR(10) PRIMARY KEY,
     term VARCHAR(20) NOT NULL,
+    courseNum VARCHAR(10) PRIMARY KEY,
     courseName VARCHAR(50) NOT NULL,
     instructor VARCHAR(50) NOT NULL
 );

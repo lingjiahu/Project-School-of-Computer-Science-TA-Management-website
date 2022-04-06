@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+    <!-- header -->
+    <div class="row" style="background:#579a88; height: auto;">
+        <div class="col-1"></div>
+        <div class="col-5" style="align-items:center; padding: 10px;">
+            <img img src="../static/McGill-CS.png" width="auto" height="auto">
+        </div>
+        <div class="col-1"></div>
+        <div class="col-5" style="align-items:center; padding: 10px;">
+            <h1 style="color: white;">TA Administration</h1>
+        </div>
+    </div>
+
+    <!-- menu bar -->
+    <div class="row" style="background:#b2e1d4; height:auto">
+        <div class="col-1"></div>
+        <div class="col-10" style="align-items:center; padding: 10px;">
+            <a href="{{ url_for('admin.update') }}"><font size="4"><b>TA/COURSE INFO&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.info') }}"><font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.adminimport') }}"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
+        </div>
+    </div>
+
+    <!-- display all TA for a course -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <!-- input term_month_year & course_num -->
+            <form method="POST">
+                <table border="0">
+                    <tr>
+                        <td><label> Select Term (e.g. Winter2022):</label></td> 
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td><label> Select Course (e.g. COMP307):</label></td> 
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" name="submit" value="search"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- display results  -->
+    <!-- term_month_year, course_num, TA_name, student_ID, assigned_hours -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            
+
+        </div>
+        <div class="col-1"></div>
+    </div>   
+
+    <!-- add -->
+    <div class="row" id="addTA" style="height:auto; display: none;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Add a TA to a Course</h2>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- remove -->
+    <div class="row" id="removeTA" style="height:auto; display: none;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Remove a TA from a Course</h2>
+        </div>
+        <!-- input TA student id -->
+
+
+        <div class="col-1"></div>
+    </div>
+
+    <!-- select a TA to remove -->
+
+
+
+
+    <!-- footer -->
+    <div class="row footer">
+        <div class="col-1"></div>
+        <div class="col-7" style="padding-top: 15px;">
+            <a><b>Back to Dashboard</b></a>
+        </div>
+        <div class="col-3" style="align-items: center; padding: 10px;">
+            <font color="#b2e1d4" size="2">
+                <div align="right">
+                    Copyright @ 2022.<br>
+                    All Rights Reserved.
+                </div>
+            </font>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

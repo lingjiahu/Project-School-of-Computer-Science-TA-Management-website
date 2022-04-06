@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+    <!-- header -->
+    <div class="row" style="background:#579a88; height: auto;">
+        <div class="col-1"></div>
+        <div class="col-5" style="align-items:center; padding: 10px;">
+            <img img src="../static/McGill-CS.png" width="auto" height="auto">
+        </div>
+        <div class="col-1"></div>
+        <div class="col-5" style="align-items:center; padding: 10px;">
+            <h1 style="color: white;">TA Administration</h1>
+        </div>
+    </div>
+
+    <!-- menu bar -->
+    <div class="row" style="background:#b2e1d4; height:auto">
+        <div class="col-1"></div>
+        <div class="col-10" style="align-items:center; padding: 10px;">
+            <a href="{{ url_for('admin.update') }}"><font size="4"><b>TA/COURSE INFO&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.info') }}"><font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.adminimport') }}"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
+        </div>
+    </div>
+
+    <!-- import -->
+    <div class="page" id="adminImport">
+        <!-- Course Quota -->
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>Import Course Quota. Please upload a .csv file.</h2>
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUpload"/>
+                <input type="submit" name="submit" id="upload" value="Upload"/>
+                <div id="dvCSV"></div>
+            </div>
+        </div>
+        <!-- TA Cohort -->
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>Import TA Cohort. Please upload a .csv file.</h2>
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUpload"/>
+                <input type="submit" name="submit" id="upload" value="Upload"/>
+                <div id="dvCSV"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TA info, course TA info & history -->
+
+    <!-- add/ remove TA -->
+    <!-- term_month_year, course_num, TA_name, student_ID, assigned_hours -->
+    
+
+    <!-- footer -->
+    <div class="row footer">
+        <div class="col-1"></div>
+        <div class="col-7" style="padding-top: 15px;">
+            <a><b>Back to Dashboard</b></a>
+        </div>
+        <div class="col-3" style="align-items: center; padding: 10px;">
+            <font color="#b2e1d4" size="2">
+                <div align="right">
+                    Copyright @ 2022.<br>
+                    All Rights Reserved.
+                </div>
+            </font>
+        </div>
+    </div>
+
+    <script>
+        function hideAll() {
+            var elements = document.getElementsByClassName("page");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = "none";
+            }
+        }
+
+        function loadImport() {
+            hideAll();
+            document.getElementById("adminImport").style.display = "block";
+        }
+
+    </script>
+
+</body>
+
+</html>

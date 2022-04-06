@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <link rel="stylesheet" href="../static/style.css">
+    </head>
+    <body>
+        <!-- header -->
+        <div class="row" style="background:#579a88; height: auto;">
+            <div class="col-1"></div>
+            <div class="col-5" style="align-items:center; padding: 10px;">
+                <img img src="../static/McGill-CS.png" width="auto" height="auto">
+            </div>
+            <div class="col-1"></div>
+            <div class="col-5" style="align-items:center; padding: 10px;">
+                <h1 style="color: white;">System Operator Tasks</h1>
+            </div>
+        </div>
+        <div class="row" style="background:#b2e1d4; height:auto">
+            <div class="col-1"></div>
+            <div class="col-10" style="align-items:center; padding: 10px;">
+                <a href="{{ url_for('.usermanagement') }}"><font size="4"><b>Users&emsp;&emsp;</b></font></a>
+                <a href="{{ url_for('.importcsv') }}"><font size="4"><b>Import&emsp;&emsp;</b></font></a>
+                <a href="{{ url_for('.inputcourses') }}"><font size="4"><b>Input&emsp;&emsp;</b></font></a>
+            </div>
+        </div>
+        <br>
+        <!-- import csv file -->
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>Import .csv File for Profs and Courses Info.</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUpload"/>
+                <input type="submit" name="submit" id="upload" value="Upload"/>
+                </form>
+                <hr/>
+            </div>
+        </div>
+        
+        <!-- error and success messages -->
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class=flashes>
+                    {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <br><br><br>
+        <!-- footer -->
+        <div class="row footer">
+            <div class="col-1"></div>
+            <div class="col-7" style="padding-top: 15px;">
+                <a><b>Back to Dashboard</b></a>
+            </div>
+            <div class="col-3" style="align-items: center; padding: 10px;">
+                <font color="#b2e1d4" size="2">
+                    <div align="right">
+                        Copyright @ 2022.<br>
+                        All Rights Reserved.
+                    </div>
+                </font>
+            </div>
+        </div>
+    </body>
+</html>

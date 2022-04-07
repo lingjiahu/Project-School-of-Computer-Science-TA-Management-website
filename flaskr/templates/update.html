@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../static/style.css">
 </head>
 
-<body>
+<body onload="displayTA()">
     <!-- header -->
     <div class="row" style="background:#579a88; height: auto;">
         <div class="col-1"></div>
@@ -23,10 +23,26 @@
     <div class="row" style="background:#b2e1d4; height:auto">
         <div class="col-1"></div>
         <div class="col-10" style="align-items:center; padding: 10px;">
-            <a href="{{ url_for('admin.update') }}"><font size="4"><b>TA/COURSE INFO&emsp;&emsp;</b></font></a>
-            <a href="{{ url_for('admin.info') }}"><font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font></a>
-            <a href="{{ url_for('admin.adminimport') }}"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.update') }}">
+                <font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('admin.info') }}">
+                <font size="4"><b>TA/COURSE INFO<b>&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('admin.adminimport') }}">
+                <font size="4"><b>IMPORT&emsp;&emsp;</b></font>
+            </a>
         </div>
+    </div>
+
+    <!-- title -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Update TA Information for a Course</h2>
+            <p>Current TA Information</p>
+        </div>
+        <div class="col-1"></div>
     </div>
 
     <!-- display all TA for a course -->
@@ -37,15 +53,65 @@
             <form method="POST">
                 <table border="0">
                     <tr>
-                        <td><label> Select Term (e.g. Winter2022):</label></td> 
+                        <td><label> Term (e.g. Winter2022):</label></td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
                     <tr>
-                        <td><label> Select Course (e.g. COMP307):</label></td> 
+                        <td><label> Course (e.g. COMP307):</label></td>
                         <td colspan="2"><input type="text" name="course_num"></td>
-                    </tr>
-                    <tr>
                         <td><input type="submit" name="submit" value="search"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1">
+        </div>
+    </div>
+
+    <!-- display results  -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <table id="updatetable" style="display: none;">
+                <tr>
+                    <td>TA Name</td>
+                    <td>Student ID</td>
+                    <td>Assigned Hours</td>
+                </tr>
+                {% for row in data %}
+                <tr>
+                  <th> {{ row[0] }}</th>
+                  <th> {{ row[1] }}</th>
+                  <th> {{ row[2] }}</th>
+                </tr> 
+                {% endfor %}
+            </table>
+            <div id="norec" style="display: none;">
+                <p>No record.</p>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- add -->
+    <div class="row" id="addta" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4>Add a TA to the Course</h4>
+            <form method="POST">
+                <table border="0">
+                    <tr>
+                        <tr>
+                            <td><label> Term (e.g. Winter2022):</label></td>
+                            <td colspan="2"><input type="text" name="term_month_year"></td>
+                        </tr>
+                        <tr>
+                            <td><label> Course (e.g. COMP307):</label></td>
+                            <td colspan="2"><input type="text" name="course_num"></td>
+                        </tr>
+                        <td><label> TA Student ID (e.g. 260000000):</label></td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="add"></td>
                     </tr>
                 </table>
             </form>
@@ -53,34 +119,30 @@
         <div class="col-1"></div>
     </div>
 
-    <!-- display results  -->
-    <!-- term_month_year, course_num, TA_name, student_ID, assigned_hours -->
-    <div class="row" style="height:auto">
-        <div class="col-1"></div>
-        <div class="col-10">
-            
-
-        </div>
-        <div class="col-1"></div>
-    </div>   
-
-    <!-- add -->
-    <div class="row" id="addTA" style="height:auto; display: none;">
-        <div class="col-1"></div>
-        <div class="col-10">
-            <h2>Add a TA to a Course</h2>
-        </div>
-        <div class="col-1"></div>
-    </div>
-
     <!-- remove -->
-    <div class="row" id="removeTA" style="height:auto; display: none;">
+    <div class="row" id="removeta" style="height:auto; display: block;">
         <div class="col-1"></div>
         <div class="col-10">
-            <h2>Remove a TA from a Course</h2>
+            <h4>Remove a TA from the Course</h4>
+            <form method="POST">
+                <table border="0">
+                    <tr>
+                        <tr>
+                            <td><label> Term (e.g. Winter2022):</label></td>
+                            <td colspan="2"><input type="text" name="term_month_year"></td>
+                        </tr>
+                        <tr>
+                            <td><label> Course (e.g. COMP307):</label></td>
+                            <td colspan="2"><input type="text" name="course_num"></td>
+                        </tr>
+                        <td><label> TA Student ID (e.g. 260000000):</label></td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="remove"></td>
+                    </tr>
+                </table>
+            </form>
         </div>
         <!-- input TA student id -->
-
 
         <div class="col-1"></div>
     </div>
@@ -105,6 +167,19 @@
             </font>
         </div>
     </div>
+
+    <script>
+        // display all TAs if there is any, otherwise display no record message
+        function displayTA() {
+            if ('{{ disp }}' == '1') {
+                document.getElementById("updatetable").style.display = "block";
+            } else if ('{{ disp }}' == '2') {
+                document.getElementById('norec').style.display = "block";
+            }
+        }
+
+    </script>
+
 
 
 </body>

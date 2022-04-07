@@ -23,14 +23,19 @@
     <div class="row" style="background:#b2e1d4; height:auto">
         <div class="col-1"></div>
         <div class="col-10" style="align-items:center; padding: 10px;">
-            <a href="{{ url_for('admin.update') }}"><font size="4"><b>TA/COURSE INFO&emsp;&emsp;</b></font></a>
-            <a href="{{ url_for('admin.info') }}"><font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.update') }}"><font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.info') }}"><font size="4"><b>TA/COURSE INFO<b>&emsp;&emsp;</b></font></a>
             <a href="{{ url_for('admin.adminimport') }}"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
         </div>
+        <div class="col-1"></div>
     </div>
 
     <!-- TA info, course TA info & history -->
-
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10"><h2>TA & Course Information</h2></div>
+        <div class="col-1"></div>
+    </div>
 
     <!-- footer -->
     <div class="row footer">
@@ -46,6 +51,7 @@
                 </div>
             </font>
         </div>
+        <div class="col-1"></div>
     </div>
 </body>
 

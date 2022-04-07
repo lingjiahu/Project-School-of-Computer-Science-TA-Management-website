@@ -49,11 +49,12 @@
         <div class="col-10">
             <form method="POST" enctype="multipart/form-data">
                 <input type="file" name="fileUpload" />
-                <input type="submit" name="submit" id="upload" value="Upload" />
+                <input type="submit" name="submit" value="Upload Course Quota" />
                 <div id="dvCSV"></div>
         </div>
         <div class="col-1"></div>
     </div>
+
     <!-- TA Cohort -->
     <div class="row">
         <div class="col-1"></div>
@@ -67,11 +68,28 @@
         <div class="col-10">
             <form method="POST" enctype="multipart/form-data">
                 <input type="file" name="fileUpload" />
-                <input type="submit" name="submit" id="upload" value="Upload" />
+                <input type="submit" name="submit" value="Upload TA Cohort" />
                 <div id="dvCSV"></div>
         </div>
         <div class="col-1"></div>
     </div>
+
+    <!-- error and success messages -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class=flashes>
+                {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
 
     <!-- footer -->
     <div class="row footer">

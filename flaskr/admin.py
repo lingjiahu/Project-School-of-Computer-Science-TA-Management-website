@@ -9,7 +9,9 @@ bp = Blueprint("admin",__name__,url_prefix="/admin")
 
 @bp.route('/info', methods=["GET","POST"]) 
 def info():
+
     return render_template("info.html")
+
 
 @bp.route('/update', methods=["GET","POST"]) 
 def update():
@@ -25,13 +27,13 @@ def update():
             con = db.get_db()
             # query for data
             cur = con.cursor()
-            cur.execute("select t.tname, t.tid, t.hours from tacohort t join taassignment a on t.tid = a.tid where a.term=:term and a.coursenum=:course", {"term": term, "course": course})
+            cur.execute("select t.tname, t.tid, t.hours from tacohort t join taassignment a on t.tid = a.tid where a.active = true and a.term=:term and a.coursenum=:course", {"term": term, "course": course})
             con.row_factory = sqlite3.Row
             res = cur.fetchall()
             if (len(res) == 0):
-                disp = 2
+                disp = 1   # disp = 1: no record from search
             else:
-                disp = 1
+                disp = 2   # disp = 2: >=1 record from search
             return render_template("update.html", data=res, disp=disp)
         elif (func == "add"): # add a TA
             # user input
@@ -42,29 +44,42 @@ def update():
             con = db.get_db()
             cur = con.cursor()
             try:
-                cur.execute("insert into taassignment (term, coursenum, tid) values (term=:term, coursenum=:course, tid=:tid)", {"term": term, "course": course, "tid": tid})
+                cur.execute(("replace into taassignment values ('{}','{}','{}', true)").format(term,course,tid))
                 con.commit()
-                disp = 1
+                flash(Markup("<font color=\"green\">Add Successful!</font>"))
             except Exception as e:
-                disp = 2
                 print(str(e))
-            return render_template("update.html", disp=disp)
-        elif (func == "remove"): # remove a TA
-
-            return render_template("update.html", disp=disp)
+                flash(Markup("<font color=\"red\">Error: Add Failed. Please validate input data.</font>"))
+            return render_template("update.html")
+        elif (func == "remove"): # remove a TA (active = false)
+            # user input
+            term = request.form.get("term_month_year")
+            course = request.form.get("course_num")
+            tid = request.form.get("tid")
+            # get database connection
+            con = db.get_db()
+            cur = con.cursor()
+            try:
+                cur.execute("update taassignment set active = false where term=:term and coursenum=:course and tid=:tid", {"term": term, "course": course, "tid": tid})
+                con.commit()
+                if (cur.rowcount == 1):
+                    flash(Markup("<font color=\"green\">Remove Successful!</font>"))
+                else:
+                    flash(Markup("<font color=\"red\">Error: Remove Failed. Please validate input data.</font>"))
+            except Exception as e:
+                print(str(e))
+                flash(Markup("<font color=\"red\">Error: Remove Failed. Please validate input data.</font>"))
+            return render_template("update.html")
     return render_template("update.html")
 
-# TODO
 @bp.route('/adminimport', methods=["GET","POST"]) 
 def adminimport():
     if request.method == "POST":
         func = request.form.get("submit")
         if func == "Upload Course Quota":
             # get uploaded file from POST
-            file = request.files["fileUpload"]
+            file = request.files["fileUploadCQ"]
             if file.filename.endswith(".csv"):
-                print("succ")
-                print(filename)
                 file_path = os.path.join(current_app.root_path,current_app.config['UPLOAD_FOLDER'], file.filename)
                 file.save(file_path)
                 parseQuota(file_path)
@@ -73,14 +88,12 @@ def adminimport():
                 return render_template("adminimport.html")
         elif (func == "Upload TA Cohort"):
             # get uploaded file from POST
-            file = request.files["fileUpload"]
+            file = request.files["fileUploadC"]
             if file.filename.endswith(".csv"):
                 file_path = os.path.join(current_app.root_path,current_app.config['UPLOAD_FOLDER'], file.filename)
                 file.save(file_path)
                 parseCohort(file_path)
             else:
-                print("fail")
-                print(filename)
                 flash(Markup("<font color=\"red\">Error: Please select and upload a valid .csv file</font>"))
                 return render_template("adminimport.html")
     return render_template("adminimport.html")

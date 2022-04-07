@@ -80,10 +80,10 @@
                 </tr>
                 {% for row in data %}
                 <tr>
-                  <th> {{ row[0] }}</th>
-                  <th> {{ row[1] }}</th>
-                  <th> {{ row[2] }}</th>
-                </tr> 
+                    <th> {{ row[0] }}</th>
+                    <th> {{ row[1] }}</th>
+                    <th> {{ row[2] }}</th>
+                </tr>
                 {% endfor %}
             </table>
             <div id="norec" style="display: none;">
@@ -101,17 +101,17 @@
             <form method="POST">
                 <table border="0">
                     <tr>
-                        <tr>
-                            <td><label> Term (e.g. Winter2022):</label></td>
-                            <td colspan="2"><input type="text" name="term_month_year"></td>
-                        </tr>
-                        <tr>
-                            <td><label> Course (e.g. COMP307):</label></td>
-                            <td colspan="2"><input type="text" name="course_num"></td>
-                        </tr>
-                        <td><label> TA Student ID (e.g. 260000000):</label></td>
-                        <td colspan="2"><input type="text" name="tid"></td>
-                        <td><input type="submit" name="submit" value="add"></td>
+                    <tr>
+                        <td><label> Term (e.g. Winter2022):</label></td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td><label> Course (e.g. COMP307):</label></td>
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                    </tr>
+                    <td><label> TA Student ID (e.g. 260000000):</label></td>
+                    <td colspan="2"><input type="text" name="tid"></td>
+                    <td><input type="submit" name="submit" value="add"></td>
                     </tr>
                 </table>
             </form>
@@ -127,23 +127,41 @@
             <form method="POST">
                 <table border="0">
                     <tr>
-                        <tr>
-                            <td><label> Term (e.g. Winter2022):</label></td>
-                            <td colspan="2"><input type="text" name="term_month_year"></td>
-                        </tr>
-                        <tr>
-                            <td><label> Course (e.g. COMP307):</label></td>
-                            <td colspan="2"><input type="text" name="course_num"></td>
-                        </tr>
-                        <td><label> TA Student ID (e.g. 260000000):</label></td>
-                        <td colspan="2"><input type="text" name="tid"></td>
-                        <td><input type="submit" name="submit" value="remove"></td>
+                    <tr>
+                        <td><label> Term (e.g. Winter2022):</label></td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td><label> Course (e.g. COMP307):</label></td>
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                    </tr>
+                    <td><label> TA Student ID (e.g. 260000000):</label></td>
+                    <td colspan="2"><input type="text" name="tid"></td>
+                    <td><input type="submit" name="submit" value="remove"></td>
                     </tr>
                 </table>
             </form>
         </div>
         <div class="col-1"></div>
     </div>
+
+    <!-- error and success messages -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class=flashes>
+                {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <br><br>
+
 
     <!-- footer -->
     <div class="row footer">
@@ -164,9 +182,9 @@
     <script>
         // display all TAs if there is any, otherwise display no record message
         function displayTA() {
-            if ('{{ disp }}' == '1') {
+            if ('{{ disp }}' == '2') {
                 document.getElementById("updatetable").style.display = "block";
-            } else if ('{{ disp }}' == '2') {
+            } else if ('{{ disp }}' == '1') {
                 document.getElementById('norec').style.display = "block";
             }
         }

@@ -84,6 +84,11 @@ a:hover {
 /* info */
 
 /* update */
+.intbl {
+  border: 0;
+  font-weight: normal;
+}
+
 #updatetable {
     border-collapse: collapse;
     width: 100%;
@@ -94,7 +99,9 @@ a:hover {
     padding: 8px;
   }
   
-  #updatetable tr:nth-child(1){background-color: rgb(217, 217, 217) !important;}
+  #updatetable tr:nth-child(1){
+    background-color: rgb(217, 217, 217) !important;
+  }
 
   #updatetable tr:nth-child(odd){background-color: #f2f2f2;}
     
@@ -105,8 +112,5 @@ a:hover {
     font-weight: normal;
   }
 
-  #updateTA {
-      
-  }
 
 /* adminimport */

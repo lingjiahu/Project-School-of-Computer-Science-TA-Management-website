@@ -51,13 +51,13 @@
         <div class="col-10">
             <!-- input term_month_year & course_num -->
             <form method="POST">
-                <table border="0">
+                <table class="intbl">
                     <tr>
-                        <td><label> Term (e.g. Winter2022):</label></td>
+                        <td> Term (e.g. Winter2022): </td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
                     <tr>
-                        <td><label> Course (e.g. COMP307):</label></td>
+                        <td> Course (e.g. COMP307): </td>
                         <td colspan="2"><input type="text" name="course_num"></td>
                         <td><input type="submit" name="submit" value="search"></td>
                     </tr>
@@ -72,6 +72,9 @@
     <div class="row" style="height:auto">
         <div class="col-1"></div>
         <div class="col-10">
+            {% if disp == 2 %}
+                <h4 style="margin: 2px;"> Term: {{ term }} &nbsp;&nbsp;&nbsp; Course: {{ course }}</h4>
+            {% endif %}
             <table id="updatetable" style="display: none;">
                 <tr>
                     <td>TA Name</td>
@@ -99,17 +102,17 @@
         <div class="col-10">
             <h4>Add a TA to the Course</h4>
             <form method="POST">
-                <table border="0">
+                <table class="intbl">
                     <tr>
                     <tr>
-                        <td><label> Term (e.g. Winter2022):</label></td>
+                        <td> Term (e.g. Winter2022): </td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
                     <tr>
-                        <td><label> Course (e.g. COMP307):</label></td>
+                        <td> Course (e.g. COMP307): </td>
                         <td colspan="2"><input type="text" name="course_num"></td>
                     </tr>
-                    <td><label> TA Student ID (e.g. 260000000):</label></td>
+                    <td> TA Student ID (e.g. 260000000): </td>
                     <td colspan="2"><input type="text" name="tid"></td>
                     <td><input type="submit" name="submit" value="add"></td>
                     </tr>
@@ -125,17 +128,17 @@
         <div class="col-10">
             <h4>Remove a TA from the Course</h4>
             <form method="POST">
-                <table border="0">
+                <table class="intbl">
                     <tr>
                     <tr>
-                        <td><label> Term (e.g. Winter2022):</label></td>
+                        <td> Term (e.g. Winter2022): </td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
                     <tr>
-                        <td><label> Course (e.g. COMP307):</label></td>
+                        <td> Course (e.g. COMP307): </td>
                         <td colspan="2"><input type="text" name="course_num"></td>
                     </tr>
-                    <td><label> TA Student ID (e.g. 260000000):</label></td>
+                    <td> TA Student ID (e.g. 260000000): </td>
                     <td colspan="2"><input type="text" name="tid"></td>
                     <td><input type="submit" name="submit" value="remove"></td>
                     </tr>

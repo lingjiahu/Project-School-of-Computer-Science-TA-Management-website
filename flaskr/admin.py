@@ -34,7 +34,7 @@ def update():
                 disp = 1   # disp = 1: no record from search
             else:
                 disp = 2   # disp = 2: >=1 record from search
-            return render_template("update.html", data=res, disp=disp)
+            return render_template("update.html", term=term, course=course, data=res, disp=disp)
         elif (func == "add"): # add a TA
             # user input
             term = request.form.get("term_month_year")

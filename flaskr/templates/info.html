@@ -24,7 +24,10 @@
         <div class="col-1"></div>
         <div class="col-10" style="align-items:center; padding: 10px;">
             <a href="{{ url_for('admin.info') }}">
-                <font size="4"><b>TA/COURSE INFO<b>&emsp;&emsp;</b></font>
+                <font size="4"><b>TA INFO<b>&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('admin.courseinfo') }}">
+                <font size="4"><b>COURSE INFO<b>&emsp;&emsp;</b></font>
             </a>
             <a href="{{ url_for('admin.update') }}">
                 <font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font>
@@ -52,25 +55,6 @@
                         <td> TA Student ID (e.g. 260000000): </td>
                         <td colspan="2"><input type="text" name="tid"></td>
                         <td><input type="submit" name="submit" value="Search TA"></td>
-                    </tr>
-                </table>
-            </form>
-        </div>
-        <div class="col-1"></div>
-    </div>
-
-    <!-- Course TA info & history -->
-    <div class="row" style="height:auto">
-        <div class="col-1"></div>
-        <div class="col-10">
-            <h2>Course TA Information</h2>
-            <!-- input tid -->
-            <form method="POST">
-                <table class="intbl">
-                    <tr>
-                        <td> Course (e.g. COMP307): </td>
-                        <td colspan="2"><input type="text" name="tid"></td>
-                        <td><input type="submit" name="submit" value="Search Course"></td>
                     </tr>
                 </table>
             </form>

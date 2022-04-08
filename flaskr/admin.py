@@ -13,7 +13,7 @@ def info():
         func = request.form.get("submit")
         if (func == "Search TA"):
             # user input
-            term = request.form.get("term")
+            # TODO term = request.form.get("term") 
             tid = request.form.get("tid")
             
             try:
@@ -60,30 +60,41 @@ def info():
                 query = "select term, coursenum from taassignment where tid= '{}' order by term desc".format(tid)
                 cur.execute(query)
                 courses = cur.fetchall()
-              
-
-
             except Exception as e:
                 print(e)
-
         return render_template("info.html", dispc=dispc, cohort=cohort, comments=comments, courses=courses)
-        # elif (func == "Search Course"):
-        #     # user input
-        #     coursenum = request.form.get("coursenum")
-            
-        #     # get database connection
-        #     con = db.get_db()   
-        #     cur = con.cursor()
-
-        #     # all TA assigned to the course (current and past)
-        #     cur.execute("select * from tacohort where tid=:tid order by term desc", {"tid": tid})
-            # tas = cur.fetchall()    
-             
-            # if (len(res) == 0):
-            #     disp = 1   # disp = 1: no record from search
-            # else:
-            #     disp = 2   # disp = 2: >=1 record from search
     return render_template("info.html")
+
+@bp.route('/courseinfo', methods=["GET","POST"]) 
+def courseinfo():
+    if request.method == "POST":
+        func = request.form.get("submit")
+        if (func == "Search Course"):
+            # user input
+            coursenum = request.form.get("coursenum")
+            
+            # get database connection
+            con = db.get_db()   
+            cur = con.cursor()
+            con.row_factory = sqlite3.Row
+
+            # all TA assigned to the course (current and past)
+            # cur.execute("select a.term, a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid where a.coursenum=:coursenum order by a.term desc", {"coursenum": coursenum})
+            
+            query = "select a.term, a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid where a.coursenum= '{}' order by a.term desc".format(coursenum)
+            cur.execute(query)
+            tas = cur.fetchall() 
+            # No TA info found
+            if (len(tas) == 0):
+                flash(Markup("<font color=\"red\">Error: No record found. Please validate your input.</font>"))
+                disp = False
+            else:
+                disp = True
+            return render_template("courseinfo.html", disp=disp, course=coursenum, tas=tas)
+  
+        return render_template("courseinfo.html")
+        
+    return render_template("courseinfo.html")
 
 @bp.route('/update', methods=["GET","POST"]) 
 def update():
@@ -221,3 +232,5 @@ def parseCohort(filePath):
 
 # TODO:
 # update header/ footer: overlap when resizing, footer covers text
+# change info to tainfo
+# test descending order query

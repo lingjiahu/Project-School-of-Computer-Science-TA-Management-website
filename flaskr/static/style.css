@@ -82,6 +82,18 @@ a:hover {
 }
 
 /* info */
+/* .infotbl tr {
+  margin-bottom: 2px;
+} */
+.infotbl th{
+  text-align: left;
+  padding: 2px;
+}
+
+.infotbl td{
+  font-weight: normal;
+}
+
 
 /* update */
 .intbl {
@@ -111,6 +123,3 @@ a:hover {
     text-align: left;
     font-weight: normal;
   }
-
-
-/* adminimport */

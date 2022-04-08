@@ -23,19 +23,187 @@
     <div class="row" style="background:#b2e1d4; height:auto">
         <div class="col-1"></div>
         <div class="col-10" style="align-items:center; padding: 10px;">
-            <a href="{{ url_for('admin.update') }}"><font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font></a>
-            <a href="{{ url_for('admin.info') }}"><font size="4"><b>TA/COURSE INFO<b>&emsp;&emsp;</b></font></a>
-            <a href="{{ url_for('admin.adminimport') }}"><font size="4"><b>IMPORT&emsp;&emsp;</b></font></a>
+            <a href="{{ url_for('admin.info') }}">
+                <font size="4"><b>TA/COURSE INFO<b>&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('admin.update') }}">
+                <font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('admin.adminimport') }}">
+                <font size="4"><b>IMPORT&emsp;&emsp;</b></font>
+            </a>
         </div>
         <div class="col-1"></div>
     </div>
 
-    <!-- TA info, course TA info & history -->
+    <!-- TA info & history -->
     <div class="row" style="height:auto">
         <div class="col-1"></div>
-        <div class="col-10"><h2>TA & Course Information</h2></div>
+        <div class="col-10">
+            <h2>TA Information</h2>
+            <!-- input tid -->
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term"></td>
+                    </tr>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="Search TA"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
         <div class="col-1"></div>
     </div>
+
+    <!-- Course TA info & history -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Course TA Information</h2>
+            <!-- input tid -->
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Course (e.g. COMP307): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="Search Course"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- search results -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <!-- TA Cohort Info -->
+            {% for row in cohort %}
+            <h4>TA Information for {{ row[0] }}</h4>
+            <table class="infotbl">
+                <tr>
+                    <th> TA Name: </th>
+                    <td> {{ row[1] }}</td>
+                </tr>
+                <tr>
+                    <th> Student ID: </th>
+                    <td> {{ row[2] }}</td>
+                </tr>
+                <tr>
+                    <th> Legal Name: </th>
+                    <td> {{ row[3] }}</td>
+                </tr>
+                <tr>
+                    <th> Email: </th>
+                    <td> {{ row[4] }}</td>
+                </tr>
+                <tr>
+                    <th> Is Ugrad: </th>
+                    {% if row[5] == 1 %}
+                    <td> Yes </td>
+                    {% else %}
+                    <td> No </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th> Supervisor: </th>
+                    <td> {{ row[6] }}</td>
+                </tr>
+                <tr>
+                    <th> Priority: </th>
+                    {% if row[7] == 1 %}
+                    <td> Yes </td>
+                    {% else %}
+                    <td> No </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th> Hours: </th>
+                    <td> {{ row[8] }}</td>
+                </tr>
+                <tr>
+                    <th> Date Applied: </th>
+                    <td> {{ row[9] }}</td>
+                </tr>
+                <tr>
+                    <th> Location: </th>
+                    <td> {{ row[10] }}</td>
+                </tr>
+                <tr>
+                    <th> Phone: </th>
+                    <td> {{ row[11] }}</td>
+                </tr>
+                <tr>
+                    <th> Degree: </th>
+                    <td> {{ row[12] }}</td>
+                </tr>
+                <tr>
+                    <th> Courses Applied: </th>
+                    <td> {{ row[13] }}</td>
+                </tr>
+                <tr>
+                    <th> Open to Other Courses: </th>
+                    {% if row[14] == 1 %}
+                    <td> Yes </td>
+                    {% else %}
+                    <td> No </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th> Notes: </th>
+                    <td> {{ row[15] }}</td>
+                </tr>
+            </table>
+            {% endfor %}
+
+            <!-- TODO Student Average Ratings -->
+
+            <!-- Student Comments -->
+            {% if dispc == True %}
+            <h4> Student Comments</h4>
+            <table class="infotbl">
+                {% for row in comments %}
+                <tr>
+                    <td> {{ row[0] }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if dispc == False %}
+            <h4> No Student Comments </h4>
+            {% endif %}
+
+            <!-- TODO Prof Performance Log -->
+
+
+            <!-- TODO Prof Wishlist -->
+
+            <!-- Courses Assigned -->
+            {% for row in courses %}
+            <h4> Courses Assigned </h4>
+            <table>
+                <tr>
+                    <th> Term </th>
+                    <th> Course </th>
+                </tr>
+                <tr>
+                    <td> {{ row[0] }} </td>
+                    <td> {{ row[1] }} </td>
+                </tr>
+            </table>
+            {% endfor %}
+
+
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <br><br><br><br><br><br>
 
     <!-- footer -->
     <div class="row footer">

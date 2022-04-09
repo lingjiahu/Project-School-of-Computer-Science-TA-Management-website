@@ -91,27 +91,50 @@ def courseinfo():
         func = request.form.get("submit")
         if (func == "Search Course"):
             # user input
+            term = request.form.get("term_month_year")
             coursenum = request.form.get("coursenum")
-            
+
             # get database connection
             con = db.get_db()   
             cur = con.cursor()
             con.row_factory = sqlite3.Row
 
-            # all TA assigned to the course (current and past)            
-            query = "select a.term, a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid and a.term = c.term where a.coursenum= '{}' order by a.term desc".format(coursenum)
-            cur.execute(query)
-            tas = cur.fetchall() 
-            # No TA info found
-            if (len(tas) == 0):
+            try: 
+                # get TA Quota
+                query = "select taquota from courses where coursenum='{}' and term='{}'".format(coursenum, term)
+                cur.execute(query)
+                if (cur.rowcount == 0):
+                    flash(Markup("<font color=\"red\">Error: Search Failed. Please validate input data.</font>"))
+                    return render_template("courseinfo.html")
+                for row in cur.fetchone():
+                    taquota = row
+                
+                # get current number of TA
+                query = "select count(*) from taassignment where term='{}' and coursenum='{}' group by term, coursenum".format(term, coursenum)
+                cur.execute(query)
+                if (cur.rowcount == 0):
+                    flash(Markup("<font color=\"red\">Error: Search Failed. Please validate input data.</font>"))
+                    return render_template("update.html")
+                for row in cur.fetchone():
+                    curta = row
+
+                fillrate = curta / taquota     # Filled Rate = enrollment_num / quota
+
+                # all TA assigned to the course (current and past)            
+                query = "select a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid and a.term = c.term where a.coursenum= '{}' and a.term='{}' order by a.term desc".format(coursenum, term)
+                cur.execute(query)
+                tas = cur.fetchall() 
+                # No TA info found
+                if (len(tas) == 0):
+                    flash(Markup("<font color=\"red\">Error: No record found. Please validate your input.</font>"))
+                    disp = False
+                else:
+                    disp = True
+            except Exception as e:
+                print(e)
                 flash(Markup("<font color=\"red\">Error: No record found. Please validate your input.</font>"))
-                disp = False
-            else:
-                disp = True
-            return render_template("courseinfo.html", disp=disp, course=coursenum, tas=tas)
-  
-        return render_template("courseinfo.html")
-        
+                return render_template("courseinfo.html")
+        return render_template("courseinfo.html", disp=disp, term=term, course=coursenum, curta=curta, taquota=taquota, fillrate=fillrate, tas=tas)
     return render_template("courseinfo.html")
 
 @bp.route('/update', methods=["GET","POST"]) 
@@ -234,6 +257,7 @@ def adminimport():
             else:
                 flash(Markup("<font color=\"red\">Error: Please select and upload a valid .csv file</font>"))
                 return render_template("adminimport.html")
+
         elif (func == "Upload TA Cohort"):
             # get uploaded file from POST
             file = request.files["fileUploadC"]
@@ -244,6 +268,40 @@ def adminimport():
             else:
                 flash(Markup("<font color=\"red\">Error: Please select and upload a valid .csv file</font>"))
                 return render_template("adminimport.html")
+
+        # bonus features
+        elif (func == "Upload Ugrad TA Info"):
+            # get uploaded file from POST
+            file = request.files["fileUploadU"]
+            if file.filename.endswith(".csv"):
+                file_path = os.path.join(current_app.root_path,current_app.config['UPLOAD_FOLDER'], file.filename)
+                file.save(file_path)
+                parseUgrad(file_path) # insert/ update data from CSV to DB
+            else:
+                flash(Markup("<font color=\"red\">Error: Please select and upload a valid .csv file</font>"))
+                return render_template("adminimport.html")
+        
+        elif (func == "Upload Grad TA Info"):
+            # get uploaded file from POST
+            file = request.files["fileUploadG"]
+            if file.filename.endswith(".csv"):
+                file_path = os.path.join(current_app.root_path,current_app.config['UPLOAD_FOLDER'], file.filename)
+                file.save(file_path)
+                parseGrad(file_path) # insert/ update data from CSV to DB
+            else:
+                flash(Markup("<font color=\"red\">Error: Please select and upload a valid .csv file</font>"))
+                return render_template("adminimport.html")
+        
+        elif (func == "Upload Historical Info"):
+            # get uploaded file from POST
+            file = request.files["fileUploadH"]
+            if file.filename.endswith(".csv"):
+                file_path = os.path.join(current_app.root_path,current_app.config['UPLOAD_FOLDER'], file.filename)
+                file.save(file_path)
+                parseHistory(file_path) # insert/ update data from CSV to DB
+            else:
+                flash(Markup("<font color=\"red\">Error: Please select and upload a valid .csv file</font>"))
+                return render_template("adminimport.html")
     return render_template("adminimport.html")
 
 def parseQuota(filePath):
@@ -251,7 +309,7 @@ def parseQuota(filePath):
         # CSV Column Names
         col_names = ['term','coursenum','coursename', 'instructor', 'coursetype', 'courseenrollnum', 'taquota']
         # Use Pandas to parse the CSV file
-        csvData = pandas.read_csv(filePath,names=col_names, header=None)
+        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
@@ -275,7 +333,7 @@ def parseCohort(filePath):
     # CSV Column Names
         col_names = ['term','tname', 'tid', 'legalname', 'email', 'ugrad', 'supervisor', 'priority', 'hours', 'applieddate', 'location', 'phone', 'degree', 'coursesapplied', 'flexible', 'notes']
         # Use Pandas to parse the CSV file
-        csvData = pandas.read_csv(filePath,names=col_names, header=None)
+        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
@@ -294,10 +352,76 @@ def parseCohort(filePath):
             print(str(e))
             flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
 
+def parseUgrad(filePath):
+    try:
+        # CSV Column Names
+        col_names = ['jobapp','studentid','legalname', 'mcgillemail', 'degreeyear', 'preferences', 'previous', 'legalworker', 'country', 'email', 'dateapplied', 'location', 'phone', 'field', 'numcoursesapplied', 'lastcourse', 'course1', 'course1unit', 'course2', 'course2unit', 'totalunits', 'assignment', 'recnotes', 'notes']
+        # Use Pandas to parse the CSV file
+        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+  
+        # Loop through the Rows
+        for i,row in csvData.iterrows():
+            # execute query
+                query = ("replace INTO taapplication (jobapp, studentid, legalname, mcgillemail, degreeyear, preferences, previous, legalworker, country, email, dateapplied, location, phone, field, numcoursesapplied, lastcourse, course1, course1unit, course2, course2unit, totalunits, assignment, recnotes, notes) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')").format(row['jobapp'],row['studentid'],row['legalname'], row['mcgillemail'],row['degreeyear'],row['preferences'],row['previous'],row['legalworker'],row['country'],row['email'],row['dateapplied'],row['location'],row['phone'],row['field'],row['numcoursesapplied'],row['lastcourse'],row['course1'],row['course1unit'],row['course2'],row['course2unit'],row['totalunits'],row['assignment'],row['recnotes'],row['notes'])
+                print(query)
+                con = db.get_db()
+                con.execute(query)
+                con.commit()
+    except Exception as e:
+        print(str(e))
+        flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
+    flash(Markup("<font color=\"green\">Upload Successful!</font>"))
+
+def parseGrad(filePath):
+    try:
+        # CSV Column Names
+        col_names = ['jobapp','studentid','legalname', 'supervisor', 'priority', 'hrs180', 'previous', 'legalworker', 'country', 'email', 'dateapplied', 'location', 'phone', 'degreeyear', 'coursesapplied']
+        # Use Pandas to parse the CSV file
+        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+    except Exception as e:
+        print(str(e))
+        flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
+        return
+    # Loop through the Rows
+    for i,row in csvData.iterrows():
+        # execute query
+        try: 
+            query = ("REPLACE INTO courses (term, coursenum, coursename, instructor, coursetype, courseenrollnum, taquota) values"
+            "('{}','{}','{}','{}','{}','{}','{}')").format(row['term'],row['coursenum'],row[''], row[''], row[''], row[''], row[''])
+            con = db.get_db()
+            con.execute(query)
+            con.commit()
+            flash(Markup("<font color=\"green\">Upload Successful!</font>"))
+        except Exception as e:
+            print(str(e))
+            flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
+
+def parseHistory(filePath):
+    try:
+        # CSV Column Names
+        col_names = ['idlu','semster','course', 'units', 'name', 'degree', 'supervisor', 'id', 'email', 'feedback']
+        # Use Pandas to parse the CSV file
+        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+    except Exception as e:
+        print(str(e))
+        flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
+        return
+    # Loop through the Rows
+    for i,row in csvData.iterrows():
+        # execute query
+        try: 
+            query = ("REPLACE INTO courses (term, coursenum, coursename, instructor, coursetype, courseenrollnum, taquota) values"
+            "('{}','{}','{}','{}','{}','{}','{}')").format(row['term'],row['coursenum'],row['coursename'], row['instructor'], row['coursetype'], row['courseenrollnum'], row['taquota'])
+            con = db.get_db()
+            con.execute(query)
+            con.commit()
+            flash(Markup("<font color=\"green\">Upload Successful!</font>"))
+        except Exception as e:
+            print(str(e))
+            flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
+
 
 # TODO:
-# update header/ footer: overlap when resizing, footer covers text
-# change info to tainfo
 # test descending order query
-# fix add/remove editable fields
-# csv first row is colname
+# role!
+# bonus 2 imports left

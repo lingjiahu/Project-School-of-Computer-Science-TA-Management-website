@@ -80,6 +80,67 @@
         <div class="col-1"></div>
     </div>
 
+    <!-- Historial stats -->
+    <!-- Ugrad TA -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Import Historical Statistics for Undergraduate TA. Please upload a .csv file.</h2>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUploadU" />
+                <input type="submit" name="submit" value="Upload Ugrad TA Info" />
+                <div id="dvCSV"></div>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- Grad TA -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Import Historical Statistics for Graduate TA. Please upload a .csv file.</h2>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUploadG" />
+                <input type="submit" name="submit" value="Upload Grad TA Info" />
+                <div id="dvCSV"></div>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- Historical Data -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Import TA Info History. Please upload a .csv file.</h2>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileUploadH" />
+                <input type="submit" name="submit" value="Upload Historical Info" />
+                <div id="dvCSV"></div>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
     <!-- error and success messages -->
     <div class="row">
         <div class="col-1"></div>
@@ -95,7 +156,7 @@
             {% endwith %}
         </div>
     </div>
-
+    <br><br><br><br>
 
     <!-- footer -->
     <div class="row footer">

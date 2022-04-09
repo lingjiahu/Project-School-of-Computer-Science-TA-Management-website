@@ -89,15 +89,15 @@
             {% endif %}
             <table id="updatetable" style="display: none;">
                 <tr>
-                    <td>TA Name</td>
-                    <td>Student ID</td>
-                    <td>Assigned Hours</td>
+                    <th>TA Name</th>
+                    <th>Student ID</th>
+                    <th>Assigned Hours</th>
                 </tr>
                 {% for row in data %}
                 <tr>
-                    <th> {{ row[0] }}</th>
-                    <th> {{ row[1] }}</th>
-                    <th> {{ row[2] }}</th>
+                    <td> {{ row[0] }}</td>
+                    <td> {{ row[1] }}</td>
+                    <td> {{ row[2] }}</td>
                 </tr>
                 {% endfor %}
             </table>
@@ -160,7 +160,6 @@
         <div class="col-1"></div>
     </div>
 
-
     <!-- update hours -->
     <div class="row" id="updatehrs" style="height:auto; display: block;">
         <div class="col-1"></div>
@@ -203,8 +202,7 @@
             {% endwith %}
         </div>
     </div>
-    <br><br>
-
+    <br><br><br><br>
 
     <!-- footer -->
     <div class="row footer">
@@ -232,8 +230,6 @@
             }
         }
     </script>
-
-
 
 </body>
 

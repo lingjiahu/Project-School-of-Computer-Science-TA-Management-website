@@ -46,11 +46,7 @@
             <h2>TA Information</h2>
             <!-- input tid -->
             <form method="POST">
-                <table class="intbl">
-                    <tr>
-                        <td> Term (e.g. Winter2022): </td>
-                        <td colspan="2"><input type="text" name="term"></td>
-                    </tr>
+                <table class="intbl" >
                     <tr>
                         <td> TA Student ID (e.g. 260000000): </td>
                         <td colspan="2"><input type="text" name="tid"></td>
@@ -63,12 +59,12 @@
     </div>
 
     <!-- search results -->
-    <div class="row" style="height:auto">
+    <div class="row" style="height:auto;">
         <div class="col-1"></div>
         <div class="col-10">
             <!-- TA Cohort Info -->
             {% for row in cohort %}
-            <h4>TA Information for {{ row[0] }}</h4>
+            <h4 style="margin: 5px;">TA Information for {{ row[0] }}</h4>
             <table class="infotbl">
                 <tr>
                     <th> TA Name: </th>
@@ -143,51 +139,124 @@
                     <td> {{ row[15] }}</td>
                 </tr>
             </table>
+            <br>
             {% endfor %}
 
-            <!-- TODO Student Average Ratings -->
+            <!-- Student Average Ratings -->
+            {% if dispr == True %}
+            <h4 style="margin: 5px;"> Student Ratings</h4>
+            <table class="infotbl">
+                <tr>
+                    <th> Term </th>
+                    <th> Course </th>
+                    <th> Average Rating </th>
+                </tr>
+                {% for row in ratings %}
+                <tr>
+                    <td> {{ row[0] }} </td>
+                    <td> {{ row[1] }} </td>
+                    <td> {{ row[2] }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if dispr == False %}
+            <h4> No Student Rating </h4>
+            {% endif %}
+            <br>
 
             <!-- Student Comments -->
             {% if dispc == True %}
-            <h4> Student Comments</h4>
+            <h4 style="margin: 5px;"> Student Comments</h4>
             <table class="infotbl">
+                <tr>
+                    <th> Term </th>
+                    <th> Course </th>
+                    <th> Comments </th>
+                </tr>
                 {% for row in comments %}
                 <tr>
                     <td> {{ row[0] }} </td>
+                    <td> {{ row[1] }} </td>
+                    <td> {{ row[2] }} </td>
                 </tr>
                 {% endfor %}
             </table>
             {% endif %}
             {% if dispc == False %}
-            <h4> No Student Comments </h4>
+            <h4> No Student Comment </h4>
             {% endif %}
+            <br>
 
-            <!-- TODO Prof Performance Log -->
+            <!-- Prof Performance Log -->
+            {% if displ == True %}
+            <h4 style="margin: 5px;"> Prof Performance Log </h4>
+            <table class="infotbl">
+                <tr>
+                    <th> Term </th>
+                    <th> Course </th>
+                    <th> Comments </th>
+                </tr>
+                {% for row in log %}
+                <tr>
+                    <td> {{ row[0] }} </td>
+                    <td> {{ row[1] }} </td>
+                    <td> {{ row[2] }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if displ == False %}
+            <h4> No Prof Performance Log </h4>
+            {% endif %}
+            <br>
 
-
-            <!-- TODO Prof Wishlist -->
+            <!-- Prof Wishlist -->
+            {% if dispw == True %}
+            <h4 style="margin: 5px;"> Wishlists </h4>
+            <table class="infotbl">
+                <tr>
+                    <th> Term </th>
+                    <th> Course </th>
+                    <th> Prof </th>
+                </tr>
+                {% for row in wishlist %}
+                <tr>
+                    <td> {{ row[0] }} </td>
+                    <td> {{ row[1] }} </td>
+                    <td> {{ row[2] }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if dispw == False %}
+            <h4> Not On Any Wishlit </h4>
+            {% endif %}
+            <br>
 
             <!-- Courses Assigned -->
-            {% for row in courses %}
-            <h4> Courses Assigned </h4>
-            <table>
+            {% if dispa == True %}
+            <h4 style="margin: 5px;"> Courses Assigned </h4>
+            <table class="infotbl">
                 <tr>
                     <th> Term </th>
                     <th> Course </th>
                 </tr>
+                {% for row in courses %}
                 <tr>
                     <td> {{ row[0] }} </td>
                     <td> {{ row[1] }} </td>
                 </tr>
+                {% endfor %}
             </table>
-            {% endfor %}
-
-
+            {% endif %}
+            {% if dispa == False %}
+            <h4> No Courses Assigned </h4>
+            {% endif %}
         </div>
         <div class="col-1"></div>
     </div>
-
-    <br><br><br><br><br><br>
+    <br><br><br><br>
 
     <!-- footer -->
     <div class="row footer">

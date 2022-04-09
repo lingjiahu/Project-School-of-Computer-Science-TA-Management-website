@@ -13,7 +13,6 @@ def info():
         func = request.form.get("submit")
         if (func == "Search TA"):
             # user input
-            # TODO term = request.form.get("term") 
             tid = request.form.get("tid")
             
             try:
@@ -31,13 +30,19 @@ def info():
                     flash(Markup("<font color=\"red\">Error: No record found. Please validate your input.</font>"))
                     return render_template("info.html")
  
-                # student rating average
-                # TODO
-                # cur.execute("select ")
-                # ratings = cur.fetchall()     
+                # student rating average (per course per term)
+                query = "select term, coursenum, avg(score) from studenttarating where tid ='{}' group by term, coursenum".format(tid)
+                cur.execute(query)
+                print(query)
+                ratings = cur.fetchall() 
+                # print(len(ratings))
+                if (len(ratings) > 0):
+                    dispr = True
+                else:
+                    dispr = False    
 
                 # student comments
-                query = "select comments from studenttarating where '{}'".format(tid)
+                query = "select term, coursenum, comments from studenttarating where tid='{}'".format(tid)
                 cur.execute(query)
                 comments = cur.fetchall()
                 if (len(comments) > 0):
@@ -46,23 +51,38 @@ def info():
                     dispc = False
 
                 # professor performance log
-                # TODO
-                # query = "".format(tid)
-                # cur.execute(query)
-                # performlog = cur.fetchall()     
+                query = "select term, coursenum, comments from talog where tid='{}'".format(tid)
+                cur.execute(query)
+                log = cur.fetchall()
+                if (len(log) > 0):
+                    displ = True
+                else:
+                    displ = False     
 
                 # prof wishlist
-                # TODO
-                # cur.execute()
-                # wishlist = cur.fetchall() 
+                query = "select term, coursenum, pname from wishlist where tid='{}'".format(tid)
+                print(query)
+                cur.execute(query)
+                wishlist = cur.fetchall() 
+                if (len(wishlist) > 0):
+                    dispw = True
+                else:
+                    dispw = False 
 
                 # courses assigned
                 query = "select term, coursenum from taassignment where tid= '{}' order by term desc".format(tid)
                 cur.execute(query)
                 courses = cur.fetchall()
+                
+                if (len(courses) > 0):
+                    dispa = True
+                else:
+                    dispa = False
+                print(dispa)
+
             except Exception as e:
                 print(e)
-        return render_template("info.html", dispc=dispc, cohort=cohort, comments=comments, courses=courses)
+        return render_template("info.html", dispr=dispr, dispc=dispc, dispa=dispa, displ=displ, dispw=dispw, cohort=cohort, ratings=ratings, comments=comments, log=log, wishlist=wishlist, courses=courses)
     return render_template("info.html")
 
 @bp.route('/courseinfo', methods=["GET","POST"]) 
@@ -78,10 +98,8 @@ def courseinfo():
             cur = con.cursor()
             con.row_factory = sqlite3.Row
 
-            # all TA assigned to the course (current and past)
-            # cur.execute("select a.term, a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid where a.coursenum=:coursenum order by a.term desc", {"coursenum": coursenum})
-            
-            query = "select a.term, a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid where a.coursenum= '{}' order by a.term desc".format(coursenum)
+            # all TA assigned to the course (current and past)            
+            query = "select a.term, a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid and a.term = c.term where a.coursenum= '{}' order by a.term desc".format(coursenum)
             cur.execute(query)
             tas = cur.fetchall() 
             # No TA info found
@@ -108,16 +126,42 @@ def update():
 
             # get database connection
             con = db.get_db()
-            # query for data
             cur = con.cursor()
-            cur.execute("select t.tname, t.tid, t.hours from tacohort t join taassignment a on t.tid = a.tid where a.active = true and a.term=:term and a.coursenum=:course", {"term": term, "course": course})
             con.row_factory = sqlite3.Row
-            res = cur.fetchall()
-            if (len(res) == 0):
-                disp = 1   # disp = 1: no record from search
-            else:
-                disp = 2   # disp = 2: >=1 record from search
-            return render_template("update.html", term=term, course=course, data=res, disp=disp)
+
+            try:
+                # get TA Quota
+                query = "select taquota from courses where coursenum='{}' and term='{}'".format(course, term)
+                cur.execute(query)
+                if (cur.rowcount == 0):
+                    flash(Markup("<font color=\"red\">Error: Search Failed. Please validate input data.</font>"))
+                    return render_template("update.html")
+                for row in cur.fetchone():
+                    taquota = row
+                
+                # get current number of TA
+                query = "select count(*) from taassignment where term='{}' and coursenum='{}' group by term, coursenum".format(term, course)
+                cur.execute(query)
+                if (cur.rowcount == 0):
+                    flash(Markup("<font color=\"red\">Error: Search Failed. Please validate input data.</font>"))
+                    return render_template("update.html")
+                for row in cur.fetchone():
+                    curta = row
+
+                # Filled Rate = enrollment_num / quota
+                fillrate = curta / taquota
+
+                # get current assigned TAs
+                cur.execute("select t.tname, t.tid, t.hours from tacohort t join taassignment a on t.tid = a.tid and t.term = a.term where a.active = true and a.term=:term and a.coursenum=:course", {"term": term, "course": course})
+                res = cur.fetchall()
+                if (len(res) == 0):
+                    disp = 1   # disp = 1: no record from search
+                else:
+                    disp = 2   # disp = 2: >=1 record from search
+            except Exception as e:
+                print(e)
+                flash(Markup("<font color=\"red\">Error: Search Failed. Please validate input data.</font>"))
+            return render_template("update.html", term=term, course=course, taquota=taquota, curta=curta, fillrate=fillrate, data=res, disp=disp)
         elif (func == "add"): # add a TA
             # user input
             term = request.form.get("term_month_year")
@@ -152,6 +196,27 @@ def update():
             except Exception as e:
                 print(str(e))
                 flash(Markup("<font color=\"red\">Error: Remove Failed. Please validate input data.</font>"))
+            return render_template("update.html")
+        elif (func == "update"):
+            # user input
+            term = request.form.get("term_month_year")
+            tid = request.form.get("tid")
+            hours = request.form.get("hours")
+
+            # get database connection
+            con = db.get_db()
+            cur = con.cursor()
+            try:
+                query = "update tacohort set hours = '{}' where term='{}' and tid='{}'".format(hours, term, tid)
+                cur.execute(query)
+                con.commit()
+                if (cur.rowcount == 1):
+                    flash(Markup("<font color=\"green\">Update Hours Successful!</font>"))
+                else:
+                    flash(Markup("<font color=\"red\">Error: Update Hours Failed. Please validate input data.</font>"))
+            except Exception as e:
+                print(str(e))
+                flash(Markup("<font color=\"red\">Error: Add Failed. Please validate input data.</font>"))
             return render_template("update.html")
     return render_template("update.html")
 
@@ -234,3 +299,5 @@ def parseCohort(filePath):
 # update header/ footer: overlap when resizing, footer covers text
 # change info to tainfo
 # test descending order query
+# fix add/remove editable fields
+# csv first row is colname

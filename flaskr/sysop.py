@@ -299,8 +299,8 @@ def sendEmail(type,username,receiver_email):
     port = 587  # For starttls
     smtp_server = "smtp.gmail.com"
     # enter sender email and password
-    sender_email = "xiaojieyiandy@gmail.com"
-    password = "Andy06170504?"
+    sender_email = ""
+    password = ""
 
     msg = EmailMessage()
     

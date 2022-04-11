@@ -27,7 +27,7 @@
                 <font size="4"><b>TA INFO<b>&emsp;&emsp;</b></font>
             </a>
             <a href="{{ url_for('admin.courseinfo') }}">
-                <font size="4"><b>COURSE INFO<b>&emsp;&emsp;</b></font>
+                <font size="4"><b>COURSE TA INFO<b>&emsp;&emsp;</b></font>
             </a>
             <a href="{{ url_for('admin.update') }}">
                 <font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font>
@@ -76,7 +76,7 @@
     <div class="row" style="height:auto">
         <div class="col-1"></div>
         <div class="col-10">
-            {% if disp == 2 %}
+            {% if dispn == True %}
             <table id="titletbl">
                 <tr>
                     <th>Term: {{ term }} </th>
@@ -87,7 +87,8 @@
                 </tr>
             </table>
             {% endif %}
-            <table id="updatetable" style="display: none;">
+            {% if disp == True %}
+            <table id="updatetable">
                 <tr>
                     <th>TA Name</th>
                     <th>Student ID</th>
@@ -101,9 +102,7 @@
                 </tr>
                 {% endfor %}
             </table>
-            <div id="norec" style="display: none;">
-                <p>No record.</p>
-            </div>
+            {% endif %}
         </div>
         <div class="col-1"></div>
     </div>
@@ -208,8 +207,9 @@
     <div class="row footer">
         <div class="col-1"></div>
         <div class="col-7" style="padding-top: 15px;">
-            <a><b>Back to Dashboard</b></a>
-        </div>
+            <a href="{{ url_for('admin.dashboard') }}">
+                <font size="4"><b>Back to Dashboard<b>&emsp;&emsp;</b></font>
+            </a>        </div>
         <div class="col-3" style="align-items: center; padding: 10px;">
             <font color="#b2e1d4" size="2">
                 <div align="right">
@@ -219,17 +219,6 @@
             </font>
         </div>
     </div>
-
-    <script>
-        // display all TAs if there is any, otherwise display no record message
-        function displayTA() {
-            if ('{{ disp }}' == '2') {
-                document.getElementById("updatetable").style.display = "block";
-            } else if ('{{ disp }}' == '1') {
-                document.getElementById('norec').style.display = "block";
-            }
-        }
-    </script>
 
 </body>
 

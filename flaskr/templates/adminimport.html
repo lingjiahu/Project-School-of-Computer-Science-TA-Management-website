@@ -27,7 +27,7 @@
                 <font size="4"><b>TA INFO<b>&emsp;&emsp;</b></font>
             </a>
             <a href="{{ url_for('admin.courseinfo') }}">
-                <font size="4"><b>COURSE INFO<b>&emsp;&emsp;</b></font>
+                <font size="4"><b>COURSE TA INFO<b>&emsp;&emsp;</b></font>
             </a>
             <a href="{{ url_for('admin.update') }}">
                 <font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font>
@@ -162,8 +162,9 @@
     <div class="row footer">
         <div class="col-1"></div>
         <div class="col-7" style="padding-top: 15px;">
-            <a><b>Back to Dashboard</b></a>
-        </div>
+            <a href="{{ url_for('admin.dashboard') }}">
+                <font size="4"><b>Back to Dashboard<b>&emsp;&emsp;</b></font>
+            </a>        </div>
         <div class="col-3" style="align-items: center; padding: 10px;">
             <font color="#b2e1d4" size="2">
                 <div align="right">

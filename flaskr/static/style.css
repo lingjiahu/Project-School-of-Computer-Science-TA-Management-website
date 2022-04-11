@@ -73,3 +73,72 @@ a:hover{
     .col-s-12 {width: 100%;}
     .hidden-small {display: none;}
 }
+
+/* info */
+.infotbl, .cohortinfotbl {
+  border-collapse: collapse;
+}
+
+.infotbl tr, .cohortinfotbl tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.infotbl tr:nth-child(even), .cohortinfotbl tr:nth-child(odd) {
+  background-color: #f1f1f1;
+}
+
+.infotbl th, td, .cohortinfotbl th, td {
+  padding-left: 10px;
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.infotbl th {
+  text-align: left;
+  background-color: rgb(217, 217, 217);
+}
+
+.cohortinfotbl th {
+  text-align: right;
+}
+
+.infotbl, .cohortinfotbl td {
+  font-weight: normal;
+}
+
+/* update */
+.intbl th,
+td {
+  border: none;
+  font-weight: normal;
+}
+
+#titletbl th {
+  padding-right: 15px;
+  padding-bottom: 5px;
+}
+
+#updatetable {
+  border-collapse: collapse;
+}
+
+#updatetable td,
+#updatetable th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#updatetable tr:nth-child(1) {
+  background-color: rgb(217, 217, 217) !important;
+}
+
+#updatetable tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+#updatetable td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  font-weight: normal;

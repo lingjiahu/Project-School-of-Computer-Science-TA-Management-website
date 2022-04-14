@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="../static/css/register.css">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <form method="post">
+            <div>
+            <label for="firstname">First Name</label>
+            <input type="text" id="firstname" name="firstname"> 
+            </div>
+            <div>
+            <label for="firstname">Last Name</label>
+            <input type="text" id="lastname" name="lastname"> 
+            </div>
+
+            <div>
+            <label for="studentid">Student Id</label>
+            <input type="text" id="studentid" name="studentid"> 
+            </div>
+            
+            <div>
+            <label for="course">Course Registered</label>
+            <select name="course" multiple>
+                <option>COMP 202</option>
+                <option>COMP 206</option>
+                <option>COMP 208</option>
+                <option>COMP 302</option>
+                <option>COMP 303</option>
+            </select>
+            </div>  
+            
+            <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"> 
+            </div>
+
+            <div>
+            <label for="password">Password</label>
+            <input type="text" id="password" name="password">
+            </div>
+
+            <div>
+            <label for="password">Confirm Password</label>
+            <input type="text" id="confirmpassword" name="confirmpassword">
+            </div>
+
+            <div>
+            <label for="email">E-Mail</label>
+            <input type="text" id="email" name="email">
+            </div>
+
+            <div>
+            <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

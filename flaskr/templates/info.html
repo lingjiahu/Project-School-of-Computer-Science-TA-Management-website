@@ -258,6 +258,22 @@
         </div>
         <div class="col-1"></div>
     </div>
+
+     <!-- error and success messages -->
+     <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class=flashes>
+                {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
     <br><br><br><br>
 
     <!-- footer -->

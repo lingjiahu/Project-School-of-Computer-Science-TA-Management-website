@@ -63,7 +63,7 @@
                     <tr>
                         <td> Course (e.g. COMP307): </td>
                         <td colspan="2"><input type="text" name="course_num"></td>
-                        <td><input type="submit" name="submit" value="search"></td>
+                        <td><input type="submit" name="submit" value="Search"></td>
                     </tr>
                 </table>
             </form>
@@ -115,7 +115,6 @@
             <form method="POST">
                 <table class="intbl">
                     <tr>
-                    <tr>
                         <td> Term (e.g. Winter2022): </td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
@@ -123,9 +122,10 @@
                         <td> Course (e.g. COMP307): </td>
                         <td colspan="2"><input type="text" name="course_num"></td>
                     </tr>
-                    <td> TA Student ID (e.g. 260000000): </td>
-                    <td colspan="2"><input type="text" name="tid"></td>
-                    <td><input type="submit" name="submit" value="add"></td>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="Add"></td>
                     </tr>
                 </table>
             </form>
@@ -141,7 +141,6 @@
             <form method="POST">
                 <table class="intbl">
                     <tr>
-                    <tr>
                         <td> Term (e.g. Winter2022): </td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
@@ -149,9 +148,10 @@
                         <td> Course (e.g. COMP307): </td>
                         <td colspan="2"><input type="text" name="course_num"></td>
                     </tr>
-                    <td> TA Student ID (e.g. 260000000): </td>
-                    <td colspan="2"><input type="text" name="tid"></td>
-                    <td><input type="submit" name="submit" value="remove"></td>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="Remove"></td>
                     </tr>
                 </table>
             </form>
@@ -167,7 +167,6 @@
             <form method="POST">
                 <table class="intbl">
                     <tr>
-                    <tr>
                         <td> Term (e.g. Winter2022): </td>
                         <td colspan="2"><input type="text" name="term_month_year"></td>
                     </tr>
@@ -178,7 +177,97 @@
                     <tr>
                         <td> Hours (90/180): </td>
                         <td colspan="2"><input type="text" name="hours"></td>
-                        <td><input type="submit" name="submit" value="update"></td>
+                        <td><input type="submit" name="submit" value="Update Hours"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update TA name -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update TA Name</h4>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                    </tr>
+                    <tr>
+                        <td> New Name: </td>
+                        <td colspan="2"><input type="text" name="newname"></td>
+                        <td><input type="submit" name="submit" value="Update Name"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update term -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update Term in TA Cohort Records for a TA </h4>
+            <p>
+                <font style="color: darkgoldenrod;">
+                    Warning: This will erase all other records associated with the old record, inclduing students
+                    comments, prof performance log and etc..
+                </font>
+            </p>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                    </tr>
+                    <tr>
+                        <td> Old Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="oldterm"></td>
+                    </tr>
+                    <tr>
+                        <td> New Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="newterm"></td>
+                        <td><input type="submit" name="submit" value="Update Term"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update TA id -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update Student ID in TA Cohort Records for a TA </h4>
+            <p>
+                <font style="color: darkgoldenrod;">
+                    Warning: This will erase all other records associated with the old record, inclduing students
+                    comments, prof performance log and etc..
+                </font>
+            </p>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term"></td>
+                    </tr>
+                    <tr>
+                        <td> Old TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="oldid"></td>
+                    </tr>
+                    <tr>
+                        <td> New TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="newid"></td>
+                        <td><input type="submit" name="submit" value="Update ID"></td>
                     </tr>
                 </table>
             </form>
@@ -209,7 +298,8 @@
         <div class="col-7" style="padding-top: 15px;">
             <a href="{{ url_for('admin.dashboard') }}">
                 <font size="4"><b>Back to Dashboard<b>&emsp;&emsp;</b></font>
-            </a>        </div>
+            </a>
+        </div>
         <div class="col-3" style="align-items: center; padding: 10px;">
             <font color="#b2e1d4" size="2">
                 <div align="right">

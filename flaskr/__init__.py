@@ -3,7 +3,6 @@ from flask import Flask
 from flaskr.sysop import bp as sys_bp
 from flaskr.admin import bp as admin_bp
 
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -16,16 +15,9 @@ def create_app(test_config=None):
 
     # upload floder
     app.config['UPLOAD_FOLDER'] = 'static/files'
-    
 
     from . import db
     db.init_app(app)
-
-    def query_db(query,args=(),one=False):
-        cur = db.get_db().execute(query,args)
-        rv = cur.fetchall()
-        cur.close()
-        return (rv[0] if rv else None) if one else rv
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -39,7 +31,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
 
     return app
 

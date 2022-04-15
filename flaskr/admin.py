@@ -1,17 +1,12 @@
-from ctypes.wintypes import tagSIZE
-from dis import dis
 import os
 import sqlite3
-from tkinter.messagebox import NO
-from traceback import print_tb
-import traceback
 from flask import Blueprint, render_template, request, flash, Markup, current_app
-from numpy import disp
 import pandas
 from flaskr import db
 
 bp = Blueprint("admin",__name__,template_folder="templates", url_prefix="/")
 
+# TA Info
 @bp.route('admin/info', methods=["GET","POST"]) 
 def info():
     if request.method == "POST":
@@ -19,7 +14,12 @@ def info():
         if (func == "Search TA"):
             # user input
             tid = request.form.get("tid")
-            
+            if (tid == ''):     # empty user input
+                flash(Markup("<font color=\"red\">Error: TA Student ID cannot be empty. Please validate your input.</font>"))
+                return render_template("info.html")
+            else:
+                values = [tid]
+
             try:
                 # get database connection
                 con = db.get_db()   
@@ -27,10 +27,11 @@ def info():
                 con.row_factory = sqlite3.Row
 
                 # TA Cohort info (current and past)
-                cur.execute("select * from tacohort where tid=:tid order by term desc", {"tid": tid})
+                query = ("select * from tacohort where tid = ? order by term desc")
+                cur.execute(query, values)
                 cohort = cur.fetchall()
 
-                # No TA info found
+                # No TA record info found
                 if (len(cohort) == 0):
                     flash(Markup("<font color=\"red\">Error: No record found. Please validate your input.</font>"))
                     return render_template("info.html")
@@ -40,25 +41,26 @@ def info():
                 cur.execute(query)
                 ratings = cur.fetchall() 
                 if (len(ratings) > 0):
-                    dispr = True
+                    dispr = True    # display flag for student ratings
                 else:
-                    dispr = False    
+                    dispr = False
 
                 # student comments
                 query = "select term, coursenum, comments from studenttarating r where tid='{}' order by r.term, r.coursenum".format(tid)
                 cur.execute(query)
                 comments = cur.fetchall()
                 if (len(comments) > 0):
-                    dispc = True
+                    dispc = True    # display flag for student comments
                 else:
                     dispc = False
 
                 # professor performance log
                 query = "select t.term, t.coursenum, c.instructor, t.comments from talog t join courses c on t.term = c.term and t.coursenum = c.coursenum where tid='{}' order by t.term desc, t.coursenum".format(tid)
                 cur.execute(query)
+                print(query)
                 log = cur.fetchall()
                 if (len(log) > 0):
-                    displ = True
+                    displ = True    # display flag for performance log
                 else:
                     displ = False     
 
@@ -67,7 +69,7 @@ def info():
                 cur.execute(query)
                 wishlist = cur.fetchall() 
                 if (len(wishlist) > 0):
-                    dispw = True
+                    dispw = True       # display flag for prof wishlist
                 else:
                     dispw = False 
 
@@ -76,15 +78,18 @@ def info():
                 cur.execute(query)
                 courses = cur.fetchall()
                 if (len(courses) > 0):
-                    dispa = True
+                    dispa = True    # display flag for courses
                 else:
                     dispa = False
-
             except Exception as e:
-                print(traceback.format_exc())
-        return render_template("info.html", dispr=dispr, dispc=dispc, dispa=dispa, displ=displ, dispw=dispw, cohort=cohort, ratings=ratings, comments=comments, log=log, wishlist=wishlist, courses=courses)
+                print(e)
+                flash(Markup("<font color=\"red\">Error: Please validate your input.</font>"))
+                return render_template("info.html")
+            
+            return render_template("info.html", dispr=dispr, dispc=dispc, dispa=dispa, displ=displ, dispw=dispw, cohort=cohort, ratings=ratings, comments=comments, log=log, wishlist=wishlist, courses=courses)
     return render_template("info.html")
 
+# Course TA Info
 @bp.route('admin/courseinfo', methods=["GET","POST"]) 
 def courseinfo():
     if request.method == "POST":
@@ -93,6 +98,9 @@ def courseinfo():
             # user input
             term = request.form.get("term_month_year")
             coursenum = request.form.get("coursenum")
+            if (term == '' or coursenum == ''):     # empty user input
+                flash(Markup("<font color=\"red\">Error: Term and Course cannot be empty. Please validate your input.</font>"))
+                return render_template("courseinfo.html")
 
             # get database connection
             con = db.get_db()   
@@ -104,42 +112,45 @@ def courseinfo():
                 query = "select taquota from courses where coursenum='{}' and term='{}'".format(coursenum, term)
                 cur.execute(query)
                 res = cur.fetchone()
-                if (res == None):
-                    flash(Markup("<font color=\"red\">No TA Quota assoicated with {}. Please validate course data.</font>").format(coursenum))
+                if (res == None):   # No record for the course
+                    flash(Markup("<font color=\"red\"> No record found for {} {}. Please validate course data.</font>").format(coursenum, term))
                     return render_template("courseinfo.html")
-                taquota = cur.fetchone()[0]
+                taquota = res[0]
                 
                 # get current number of TA
                 query = "select count(*) from taassignment where term='{}' and coursenum='{}' and active = 1 group by term, coursenum union select 0 where not exists (select * from taassignment where coursenum='{}' and term='{}')".format(term, coursenum, coursenum, term)
                 cur.execute(query)
                 curta = cur.fetchone()[0]
-
-                fillrate = curta / taquota     # Filled Rate = enrollment_num / quota
+                if (taquota == None):   # No valid TA Quota
+                    taquota = "N/A"
+                    fillrate = "N/A"
+                else:             
+                    fillrate = curta / taquota     # Filled Rate = enrollment_num / quota
+                dispn = True    # display flag for relevant stats
 
                 # all TA assigned to the course (current and past)            
                 query = "select a.tid, c.tname from taassignment a join tacohort c on a.tid = c.tid and a.term = c.term where a.coursenum= '{}' and a.term='{}' and a.active = 1 order by a.term desc".format(coursenum, term)
                 cur.execute(query)
                 tas = cur.fetchall() 
                 if (len(tas) > 0):  # found at least 1 TA
-                    disp = True
-                    dispn = True
-                else:
+                    disp = True     # display flag for TAs
+                else:   # tables of TAs not displayed
                     disp = False
-                    dispn = True
                     return render_template("courseinfo.html", disp=disp, dispn=dispn, term=term, course=coursenum, curta=curta, taquota=taquota, fillrate=fillrate)
             except Exception as e:
-                print(traceback.format_exc())
+                print(e)
                 flash(Markup("<font color=\"red\">Error: Please validate your input.</font>"))
                 return render_template("courseinfo.html")
         return render_template("courseinfo.html", disp=disp, dispn=dispn, term=term, course=coursenum, curta=curta, taquota=taquota, fillrate=fillrate, tas=tas)
     return render_template("courseinfo.html")
 
+# Update TA Info
 @bp.route('admin/update', methods=["GET","POST"]) 
 def update():
     if request.method == "POST":
         func = request.form.get("submit")
         
-        if (func == "search"):   # list all TA
+        if (func == "Search"):   # list all TA
             # user input
             term = request.form.get("term_month_year")
             course = request.form.get("course_num")
@@ -154,62 +165,108 @@ def update():
                 query = "select taquota from courses where coursenum='{}' and term='{}'".format(course, term)
                 cur.execute(query)
                 res = cur.fetchone()
-                if (res == None):
-                    flash(Markup("<font color=\"red\">No TA Quota assoicated with {}. Please validate course data.</font>").format(course))
-                    return render_template("courseinfo.html")
+                if (res == None):   # No record for the course
+                    flash(Markup("<font color=\"red\"> No record found for {} {}. Please validate course data.</font>").format(course, term))
+                    return render_template("update.html")
                 taquota = res[0]
                 
                 # get current number of TA
                 query = "select count(*) from taassignment where term='{}' and coursenum='{}' and active = 1 group by term, coursenum union select 0 where not exists (select * from taassignment where coursenum='{}' and term='{}')".format(term, course, course, term)
                 cur.execute(query)
                 curta = cur.fetchone()[0]
-
-                # Filled Rate = enrollment_num / quota
-                fillrate = curta / taquota
+                if (taquota == None):   # No valid TA Quota
+                    taquota = "N/A"
+                    fillrate = "N/A"
+                else:             
+                    fillrate = curta / taquota     # Filled Rate = enrollment_num / quota
+                dispn = True    #display flag for relevant stats
 
                 # get current assigned TAs
                 cur.execute("select t.tname, t.tid, t.hours from tacohort t join taassignment a on t.tid = a.tid and t.term = a.term where a.active = true and a.term=:term and a.coursenum=:course", {"term": term, "course": course})
                 tas = cur.fetchall()
                 if (len(tas) > 0):  # found at least 1 TA
-                    disp = True
-                    dispn = True
-                else:
+                    disp = True     # display flag for TAs
+                else:   # tables of TAs not displayed
                     disp = False
-                    dispn = True
                     return render_template("update.html", disp=disp, dispn=dispn, term=term, course=course, curta=curta, taquota=taquota, fillrate=fillrate)
             except Exception as e:
-                print(traceback.format_exc())
+                print(e)
                 flash(Markup("<font color=\"red\">Error: Search Failed. Please validate input data.</font>"))
                 return render_template("update.html")
             return render_template("update.html", disp=disp, dispn=dispn, term=term, course=course, curta=curta, taquota=taquota, fillrate=fillrate, data=tas)
             
-        elif (func == "add"): # add a TA
+        elif (func == "Add"): # add a TA
             # user input
             term = request.form.get("term_month_year")
             course = request.form.get("course_num")
             tid = request.form.get("tid")
+            values = []
+            inputs=[term, course, tid]
+            for e in inputs:
+                if (e == ''):   # null value for empty cells
+                    flash(Markup("<font color=\"red\">Error: Term, Course and TA Student ID cannot be empty. Please validate your input.</font>"))
+                    return render_template("update.html")
+                else:
+                    values.append(e)
+
             # get database connection
             con = db.get_db()
             cur = con.cursor()
+            con.row_factory = sqlite3.Row
+
             try:
-                cur.execute(("replace into taassignment values ('{}','{}','{}', true)").format(term,course,tid))
+                # validate input - TA
+                tavalues = [values[0], values[2]]
+                query = "select * from tacohort where term = ? and tid = ?"
+                cur.execute(query, tavalues)
+                res = cur.fetchall()
+                if (len(res) == 0):
+                    flash(Markup("<font color=\"red\">Error: No record associated with the TA Student ID {} in {}. Please validate your input.</font>").format(tid, term))
+                    return render_template("update.html")
+
+                # validate input - Course
+                coursevalues = [values[0], values[1]]
+                query = "select * from courses where term = ? and coursenum = ?"
+                cur.execute(query, coursevalues)
+                res = cur.fetchall()
+                if (len(res) == 0):
+                    flash(Markup("<font color=\"red\">Error: No record associated with {} {}. Please validate your input.</font>").format(course, term))
+                    return render_template("update.html")
+
+                # add TA to a course
+                query = ("insert into taassignment values (?, ?, ?, true)")
+                cur.execute(query, values)
                 con.commit()
-                flash(Markup("<font color=\"green\">Add Successful!</font>"))
+                if (cur.rowcount == 1):
+                    flash(Markup("<font color=\"green\">Add Successful!</font>"))
+                else:
+                    flash(Markup("<font color=\"red\">Error: Add Failed. Please validate input data.</font>"))
             except Exception as e:
                 print(str(e))
                 flash(Markup("<font color=\"red\">Error: Add Failed. Please validate input data.</font>"))
             return render_template("update.html")
 
-        elif (func == "remove"): # remove a TA (active = false)
+        elif (func == "Remove"): # remove a TA (active = false)
             # user input
             term = request.form.get("term_month_year")
             course = request.form.get("course_num")
             tid = request.form.get("tid")
+            values = []
+            inputs=[term, course, tid]
+            for e in inputs:
+                if (e == ''):   # null value for empty cells
+                    flash(Markup("<font color=\"red\">Error: Term, Course and TA Student ID cannot be empty. Please validate your input.</font>"))
+                    return render_template("update.html")
+                else:
+                    values.append(e)
+
             # get database connection
             con = db.get_db()
             cur = con.cursor()
             try:
-                cur.execute("update taassignment set active = false where term=:term and coursenum=:course and tid=:tid", {"term": term, "course": course, "tid": tid})
+                # remove TA
+                query = ("update taassignment set active = false where term = ? and coursenum = ? and tid = ? and active = 1")
+                cur.execute(query, values)
                 con.commit()
                 if (cur.rowcount == 1):
                     flash(Markup("<font color=\"green\">Remove Successful!</font>"))
@@ -220,18 +277,26 @@ def update():
                 flash(Markup("<font color=\"red\">Error: Remove Failed. Please validate input data.</font>"))
             return render_template("update.html")
 
-        elif (func == "update"):    # update hours for a TA
+        elif (func == "Update Hours"):    # update hours for a TA
             # user input
             term = request.form.get("term_month_year")
             tid = request.form.get("tid")
             hours = request.form.get("hours")
+            values = []
+            inputs=[hours, term, tid]
+            for e in inputs:
+                if (e == ''):   # null value for empty cells
+                    flash(Markup("<font color=\"red\">Error: Term, TA Student ID and Hours cannot be empty. Please validate your input.</font>"))
+                    return render_template("update.html")
+                else:
+                    values.append(e)
 
             # get database connection
             con = db.get_db()
             cur = con.cursor()
             try:
-                query = "update tacohort set hours = '{}' where term='{}' and tid='{}'".format(hours, term, tid)
-                cur.execute(query)
+                query = ("update tacohort set hours = ? where term = ? and tid= ?")
+                cur.execute(query, values)
                 con.commit()
                 if (cur.rowcount == 1):
                     flash(Markup("<font color=\"green\">Update Hours Successful!</font>"))
@@ -239,7 +304,184 @@ def update():
                     flash(Markup("<font color=\"red\">Error: Update Hours Failed. Please validate input data.</font>"))
             except Exception as e:
                 print(str(e))
-                flash(Markup("<font color=\"red\">Error: Update Failed. Please validate input data.</font>"))
+                flash(Markup("<font color=\"red\">Error: Update Hours Failed. Please validate input data.</font>"))
+            return render_template("update.html")
+
+        elif (func == "Update Name"):    # update name for a TA
+            # user input
+            term = request.form.get("term_month_year")
+            tid = request.form.get("tid")
+            name = request.form.get("newname")
+            values = []
+            inputs=[name, term, tid]
+            for e in inputs:
+                if (e == ''):   # null value for empty cells
+                    flash(Markup("<font color=\"red\">Error: Term, TA Student ID and Name cannot be empty. Please validate your input.</font>"))
+                    return render_template("update.html")
+                else:
+                    values.append(e)
+
+            # get database connection
+            con = db.get_db()
+            cur = con.cursor()
+            try:
+                query = ("update tacohort set tname = ? where term = ? and tid= ?")
+                cur.execute(query, values)
+                con.commit()
+                if (cur.rowcount == 1):
+                    flash(Markup("<font color=\"green\">Update TA Name Successful!</font>"))
+                else:
+                    flash(Markup("<font color=\"red\">Error: Update TA Name Failed. Please validate input data.</font>"))
+            except Exception as e:
+                print(str(e))
+                flash(Markup("<font color=\"red\">Error: Update TA Name Failed. Please validate input data.</font>"))
+            return render_template("update.html")
+        
+        elif (func == "Update Term"):    # update term for a TA
+            # user input
+            tid = request.form.get("tid")
+            oldterm = request.form.get("oldterm")
+            newterm = request.form.get("newterm")
+            values = []
+            inputs=[newterm, oldterm, tid]
+            for e in inputs:
+                if (e == ''):   # null value for empty cells
+                    flash(Markup("<font color=\"red\">Error: TA Student ID, Old Term and New Term cannot be empty. Please validate your input.</font>"))
+                    return render_template("update.html")
+                else:
+                    values.append(e)
+
+            sdvalues = [values[2], values[1]]   # values for search and delete: tid, term   
+            nvalues = [values[2], values[0]]    # values for constraint checking
+
+            # get database connection
+            con = db.get_db()
+            cur = con.cursor()
+
+            try:
+                # check if old record exists
+                query = "select * from tacohort where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+                res = cur.fetchall()
+                if (len(res) == 0):
+                    flash(Markup("<font color=\"red\">Error: No record associated with the TA Student ID {} in {}. Please validate your input.</font>").format(tid, oldterm))
+                    return render_template("update.html")
+                
+                # check unique constraint on term and tid
+                query = "select * from tacohort where tid = ? and term = ?"
+                cur.execute(query, nvalues)
+                res = cur.fetchall()
+                if (len(res) != 0):
+                    flash(Markup("<font color=\"red\">Error: Failed to update Term due to existing record for TA with Student ID {} in {}. Please validate your input.</font>").format(tid, newterm))
+                    return render_template("update.html")
+
+                # delete all relevant records
+                # tables affected: taassignment, talog, studenttaratings, wishlist
+                
+                # delete records from taassignment
+                query = "delete from taassignment where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+                if (cur.rowcount != 1):
+                    flash(Markup("<font color=\"red\">Error: Update Term Failed. Please validate your input.</font>"))
+                    return render_template("update.html")
+
+                # delete records from talog
+                query = "delete from talog where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+
+                # delete records from studenttaratings
+                query = "delete from studenttarating where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+
+                # delete records from wishlist
+                query = "delete from wishlist where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+
+                # update TA cohort
+                query = ("update tacohort set term = ? where term = ? and tid= ?")
+                cur.execute(query, values)
+                con.commit()
+                if (cur.rowcount == 1):
+                    flash(Markup("<font color=\"green\">Update Term Successful!</font>"))
+                else:
+                    flash(Markup("<font color=\"red\">Error: Update Term Failed. Please validate input data.</font>"))
+
+            except Exception as e:
+                print(str(e))
+                flash(Markup("<font color=\"red\">Error: Update Term Failed. Please validate input data.</font>"))
+            return render_template("update.html")
+    
+        elif (func == "Update ID"):    # update ID for a TA
+            # user input
+            term = request.form.get("term")
+            oldtid = request.form.get("oldid")
+            newtid = request.form.get("newid")
+            values = []
+            inputs=[newtid, oldtid, term]
+            for e in inputs:
+                if (e == ''):   # null value for empty cells
+                    flash(Markup("<font color=\"red\">Error: Term, Old TA Student ID and New TA Student ID cannot be empty. Please validate your input.</font>"))
+                    return render_template("update.html")
+                else:
+                    values.append(e)
+
+            sdvalues = [values[1], values[2]]   # values for search and delete: tid, term   
+            nvalues = [values[0], values[2]]    # values for constraint checking
+
+            # get database connection
+            con = db.get_db()
+            cur = con.cursor()
+
+            try:
+                # check if old record exists
+                query = "select * from tacohort where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+                res = cur.fetchall()
+                if (len(res) == 0):
+                    flash(Markup("<font color=\"red\">Error: No record associated with the TA Student ID {} in {}. Please validate your input.</font>").format(oldtid, term))
+                    return render_template("update.html")
+                
+                # check unique constraint on term and tid
+                query = "select * from tacohort where tid = ? and term = ?"
+                cur.execute(query, nvalues)
+                res = cur.fetchall()
+                if (len(res) != 0):
+                    flash(Markup("<font color=\"red\">Error: Failed to update Term due to existing record for TA with Student ID {} in {}. Please validate your input.</font>").format(newtid, term))
+                    return render_template("update.html")
+
+                # delete all relevant records
+                # tables affected: taassignment, talog, studenttaratings, wishlist
+                
+                # delete records from taassignment
+                query = "delete from taassignment where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+                if (cur.rowcount != 1):
+                    flash(Markup("<font color=\"red\">Error: Update Term Failed. Please validate your input.</font>"))
+                    return render_template("update.html")
+
+                # delete records from talog
+                query = "delete from talog where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+
+                # delete records from studenttaratings
+                query = "delete from studenttarating where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+
+                # delete records from wishlist
+                query = "delete from wishlist where tid = ? and term = ?"
+                cur.execute(query, sdvalues)
+
+                query = ("update tacohort set tid = ? where tid = ? and term= ?")
+                cur.execute(query, values)
+                con.commit()
+                if (cur.rowcount == 1):
+                    flash(Markup("<font color=\"green\">Update TA Student ID Successful!</font>"))
+                else:
+                    flash(Markup("<font color=\"red\">Error: Update TA Student ID Failed. Please validate input data.</font>"))
+
+            except Exception as e:
+                print(str(e))
+                flash(Markup("<font color=\"red\">Error: Update TA Student ID Failed. Please validate input data.</font>"))
             return render_template("update.html")
     return render_template("update.html")
 
@@ -304,6 +546,7 @@ def adminimport():
                 return render_template("adminimport.html")
     return render_template("adminimport.html")
 
+# TODO return to dashboard
 @bp.route('dashboard')
 def dashboard():
     return render_template("dashboard.html")
@@ -329,7 +572,7 @@ def parseQuota(filePath):
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
         return
-    flash(Markup("<font color=\"green\">Upload TA Quota Successful!</font>"))
+    flash(Markup("<font color=\"green\">Upload Course Quota Successful!</font>"))
 
 def parseCohort(filePath):
     try:
@@ -436,5 +679,4 @@ def getvalues(row):
             values.append(e)
     return values
 
-# TODO:
-# role!
+# TODO: role!

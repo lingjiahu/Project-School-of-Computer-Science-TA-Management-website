@@ -44,6 +44,50 @@ CREATE TABLE registeredTable(
     FOREIGN KEY(courseNum) REFERENCES courses(courseNum)
 );
 
+create table studenttarating
+(
+    ratingId  int
+        constraint studenttarating_pk
+            primary key,
+    Score     int,
+    comments  varchar(500),
+    term      varchar(10),
+    coursenum varchar(10),
+    tid       varchar(10),
+    foreign key (term, coursenum, tid) references taassignment
+);
+
+create table talog
+(
+    logid     int
+        constraint talog_pk
+            primary key,
+    term      varchar(10),
+    coursenum varchar(10),
+    tid       varchar(10),
+    tname     varchar(30)
+        constraint talog_tacohort_tname_fk
+            references tacohort (tname),
+    comments  Varchar(500),
+    datetime  datetime,
+    foreign key (term, coursenum, tid) references taassignment
+);
+
+create table wishlist
+(
+    wlid      int
+        constraint wishlist_pk
+            primary key,
+    term      varchar(10),
+    coursenum varchar(10)
+        constraint wishlist_courses_coursenum_fk
+            references courses (coursenum),
+    tname     varchar(30),
+    tid       varchar(10),
+    constraint wishlist_tacohort_tid_tname_term_fk
+        foreign key (tid, tname, term) references tacohort (tid, tname, term)
+);
+
 create table tacohort
 (
     term           VARCHAR(10),
@@ -80,3 +124,58 @@ create table taassignment
         on update restrict
 );
 
+create table taapplication
+(
+    jobapp            varchar(30),
+    studentid         varchar(10)
+        constraint taapplication_pk
+            primary key,
+    legalname         varchar(30),
+    degreeyear        varchar(20),
+    preferences       varchar(30),
+    previous          varchar(20),
+    legalworker       boolean,
+    country           varchar(20),
+    email             varchar(50),
+    dateapplied       date,
+    location          varchar(20),
+    phone             varchar(20),
+    field             varchar(30),
+    numcoursesapplied int,
+    lastcourse        varchar(10),
+    course1           varchar(10),
+    course1unit       integer,
+    course2           varchar(10),
+    course2unit       int,
+    totalunits        int,
+    assignment        varchar(30),
+    recnotes          varchar(50),
+    notes             varchar(100),
+    coursesapplied    varchar(50),
+    supervisor        varchar(20),
+    priority          boolean,
+    hrs180            boolean,
+    mcgillemail       varchar(50),
+    expsummary        VARCHAR(100),
+    status            VARCHAR(20),
+    diff              boolean,
+    appin             varchar(20),
+    flexible          boolean,
+    previousworker    boolean
+);
+
+create table tahistory
+(
+    idlu       varchar(10)
+        constraint tahistory_pk
+            primary key,
+    term       Varchar(10),
+    coursenum  varchar(10),
+    units      int,
+    tname      varchar(30),
+    degree     varchar(30),
+    supervisor varchar(30),
+    id         varchar(10),
+    email      varchar(50),
+    feedback   varchar(100)
+);

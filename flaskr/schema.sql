@@ -45,10 +45,11 @@ CREATE TABLE users(
 
 CREATE TABLE registeredTable(
     userid INTEGER,
-    courseNum VARCHAR(10),
-    PRIMARY KEY (userid,courseNum),
+    coursenum VARCHAR(10),
+    term VARCHAR(20),
+    PRIMARY KEY (userid,coursenum,term),
     FOREIGN KEY(userid) REFERENCES users(userid),
-    FOREIGN KEY(courseNum) REFERENCES courses(courseNum)
+    FOREIGN KEY(coursenum,term) REFERENCES courses(coursenum,term)
 );
 
 create table studenttarating

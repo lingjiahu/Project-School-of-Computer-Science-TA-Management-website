@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body onload="displayTA()">
+    <!-- header -->
+    <div class="row" style="background:#579a88; height: auto;">
+        <div class="col-1"></div>
+        <div class="col-5" style="align-items:center; padding: 10px;">
+            <img img src="../static/McGill-CS.png" width="auto" height="auto">
+        </div>
+        <div class="col-1"></div>
+        <div class="col-5" style="align-items:center; padding: 10px;">
+            <h1 style="color: white;">TA Administration</h1>
+        </div>
+    </div>
+
+    <!-- menu bar -->
+    <div class="row" style="background:#b2e1d4; height:auto">
+        <div class="col-1"></div>
+        <div class="col-10" style="align-items:center; padding: 10px;">
+            <a href="{{ url_for('info') }}">
+                <font size="4"><b>TA INFO<b>&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('courseinfo') }}">
+                <font size="4"><b>COURSE TA INFO<b>&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('update') }}">
+                <font size="4"><b>UPDATE TA INFO&emsp;&emsp;</b></font>
+            </a>
+            <a href="{{ url_for('adminimport') }}">
+                <font size="4"><b>IMPORT&emsp;&emsp;</b></font>
+            </a>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- title -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h2>Update TA Information for a Course</h2>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- display all TA for a course -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <!-- input term_month_year & course_num -->
+            <h4 style="margin: 5px;">Current TA Information</h4>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td> Course (e.g. COMP307): </td>
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                        <td><input type="submit" name="submit" value="Search"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1">
+        </div>
+    </div>
+
+    <!-- display results  -->
+    <div class="row" style="height:auto">
+        <div class="col-1"></div>
+        <div class="col-10">
+            {% if dispn == True %}
+            <table id="titletbl">
+                <tr>
+                    <th>Term: {{ term }} </th>
+                    <th>Course: {{ course }} </th>
+                    <th>TA Quota: {{ taquota }} </th>
+                    <th>Current Number of TA: {{ curta }}</th>
+                    <th>Filled Rate: {{ fillrate }} </th>
+                </tr>
+            </table>
+            {% endif %}
+            {% if disp == True %}
+            <table id="updatetable">
+                <tr>
+                    <th>TA Name</th>
+                    <th>Student ID</th>
+                    <th>Assigned Hours</th>
+                </tr>
+                {% for row in data %}
+                <tr>
+                    <td> {{ row[0] }}</td>
+                    <td> {{ row[1] }}</td>
+                    <td> {{ row[2] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- add -->
+    <div class="row" id="addta" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;">Add a TA to the Course</h4>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td> Course (e.g. COMP307): </td>
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                    </tr>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="Add"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- remove -->
+    <div class="row" id="removeta" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;">Remove a TA from the Course</h4>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td> Course (e.g. COMP307): </td>
+                        <td colspan="2"><input type="text" name="course_num"></td>
+                    </tr>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                        <td><input type="submit" name="submit" value="Remove"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update hours -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update Hours for a TA</h4>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                    </tr>
+                    <tr>
+                        <td> Hours (90/180): </td>
+                        <td colspan="2"><input type="text" name="hours"></td>
+                        <td><input type="submit" name="submit" value="Update Hours"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update TA name -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update TA Name</h4>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term_month_year"></td>
+                    </tr>
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                    </tr>
+                    <tr>
+                        <td> New Name: </td>
+                        <td colspan="2"><input type="text" name="newname"></td>
+                        <td><input type="submit" name="submit" value="Update Name"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update term -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update Term in TA Cohort Records for a TA </h4>
+            <p>
+                <font style="color: darkgoldenrod;">
+                    Warning: This will erase all other records associated with the old record, inclduing students
+                    comments, prof performance log and etc..
+                </font>
+            </p>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="tid"></td>
+                    </tr>
+                    <tr>
+                        <td> Old Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="oldterm"></td>
+                    </tr>
+                    <tr>
+                        <td> New Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="newterm"></td>
+                        <td><input type="submit" name="submit" value="Update Term"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- update TA id -->
+    <div class="row" id="updatehrs" style="height:auto; display: block;">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h4 style="margin: 5px;"> Update Student ID in TA Cohort Records for a TA </h4>
+            <p>
+                <font style="color: darkgoldenrod;">
+                    Warning: This will erase all other records associated with the old record, inclduing students
+                    comments, prof performance log and etc..
+                </font>
+            </p>
+            <form method="POST">
+                <table class="intbl">
+                    <tr>
+                        <td> Term (e.g. Winter2022): </td>
+                        <td colspan="2"><input type="text" name="term"></td>
+                    </tr>
+                    <tr>
+                        <td> Old TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="oldid"></td>
+                    </tr>
+                    <tr>
+                        <td> New TA Student ID (e.g. 260000000): </td>
+                        <td colspan="2"><input type="text" name="newid"></td>
+                        <td><input type="submit" name="submit" value="Update ID"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+
+    <!-- error and success messages -->
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class=flashes>
+                {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <br><br><br><br>
+
+    <!-- footer -->
+    <div class="row footer">
+        <div class="col-1"></div>
+        <div class="col-7" style="padding-top: 15px;">
+            <a href="{{ url_for('dashboard') }}">
+                <font size="4"><b>Back to Dashboard<b>&emsp;&emsp;</b></font>
+            </a>
+        </div>
+        <div class="col-3" style="align-items: center; padding: 10px;">
+            <font color="#b2e1d4" size="2">
+                <div align="right">
+                    Copyright @ 2022.<br>
+                    All Rights Reserved.
+                </div>
+            </font>
+        </div>
+    </div>
+
+</body>
+
+</html>

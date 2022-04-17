@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="../static/style.css">
+<style>
+    a,
+    a:link {
+        text-decoration: none;
+        color: cadetblue;
+    }
+
+    a:visited {
+        text-decoration: none;
+        color: purple;
+    }
+</style>
+{% endblock %}
+
+
+{% block title %}Landing{% endblock %}
+
+{% block body %}
+
+<body>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-5">
+            <h1>Welcome: {{g.user.username}}</h1>
+        </div>
+        <div class="col-5"></div>
+        <div class="col-1">
+            <a href="{{url_for('logout')}}">Logout</a>
+        </div>
+    </div>
+
+    <div class="row" style='{{admin}}'>
+        <div class="col-1"></div>
+        <div class="col-4">
+            <a href="{{url_for('info')}}">TA Administration</a>
+        </div>
+        <div class="col-6">Import TA cohort; TA info/history; Manager TA course info.</div>
+        <div class="col-1"></div>
+    </div>
+
+    <div class="row" style='{{manage}}'>
+        <div class="col-1"></div>
+        <div class="col-4">
+            <a href="#">TA Management</a>
+        </div>
+        <div class="col-6">Office hour and responsibility; TA performance log; TA wish-list; all TAs report.</div>
+        <div class="col-1"></div>
+    </div>
+
+    <div class="row" style='{{rating}}'>
+        <div class="col-1"></div>
+        <div class="col-4">
+            <a href="{{url_for('selectCourse')}}">TA Rating</a>
+        </div>
+        <div class="col-6">Rate a TA.</div>
+        <div class="col-1"></div>
+    </div>
+
+    <div class="row" style='{{sysop}}'>
+        <div class="col-1"></div>
+        <div class="col-4">
+            <a href="#">Sysop Tasks</a>
+        </div>
+        <div class="col-6">Manage user account; Manage professor and course info.</div>
+        <div class="col-1"></div>
+    </div>
+</body>
+
+{% endblock %}

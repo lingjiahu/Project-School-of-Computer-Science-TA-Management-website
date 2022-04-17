@@ -74,7 +74,8 @@ def usermanagement():
                     sendEmail("add",username,email)
             except Exception as e:
                 print(str(e))
-                flash(Markup("<font color=\"red\">Error: Username already exists</font>"),"error")
+                #flash(Markup("<font color=\"red\">Error: Username already exists</font>"),"error")
+                flash(Markup("<font color=\"red\">Error: {}</font>".format(str(e))),"error")
         elif func == "Edit":
             # get infos for a user from POST
             firstname = request.form.get("firstname")
@@ -105,14 +106,16 @@ def usermanagement():
                 flash(Markup("<font color=\"red\">Error: <i>Username</i> is needed to edit</font>"),"error")
                 return render_template("management.html")
 
+            # get database connection
+            con = db.get_db()
+
             # check if user exists
-            result = query_db("SELECT * FROM userAccounts WHERE username='{}'".format(username),one=True)
-            if(result is None):
+            cur1 = con.execute("SELECT * FROM userAccounts WHERE username='{}'".format(username))
+            result = cur1.fetchall()
+            if(not result):
                 flash(Markup("<font color=\"red\">Error: Username doesn't exist</font>"),"error")
                 return render_template("management.html")
 
-            # get database connection
-            con = db.get_db()
             # update userpassword if password is not empty 
             if pw != "":
                 query = ("UPDATE userAccounts SET userpassword = '{}' "
@@ -180,12 +183,15 @@ def usermanagement():
                 return render_template("management.html")
 
             flash(Markup("Edit User <i>{}</i> successfully".format(username)))
-            if result['useremail'] != 'NULL':
-                sendEmail("edit",username,result['useremail'])
+            if result[0]['useremail'] != 'NULL':
+                sendEmail("edit",username,result[0]['useremail'])
             
         elif func == "Remove":
             # get username that need to delete from POST
             username = request.form.get("username")
+
+            # get database connection
+            con = db.get_db()
 
             # username is needed to remove
             if username == "":
@@ -193,15 +199,15 @@ def usermanagement():
                 return render_template("management.html")
 
             # check if user exists
-            result = query_db("SELECT * FROM userAccounts WHERE username='{}'".format(username),one=True)
-            if(result is None):
+            cur = con.execute("SELECT * FROM userAccounts WHERE username='{}'".format(username))
+            result = cur.fetchall()
+            if(not result):
                 flash(Markup("<font color=\"red\">Error: Username doesn't exist</font>"),"error")
                 return render_template("management.html")
             # create query
             query = "DELETE FROM userAccounts WHERE username='{}'".format(username)
             query2 = "DELETE FROM users WHERE username='{}'".format(username)
-            # get database connection
-            con = db.get_db()
+            
             try:
                 con.execute(query)
                 con.execute(query2)
@@ -211,9 +217,9 @@ def usermanagement():
                 return render_template("management.html")
 
             flash(Markup("Remove User <i>{}</i> successfully".format(username)))
-            if result['useremail'] != 'NULL':
+            if result[0]['useremail'] != 'NULL':
                 # remov is correct, do not add 'e' at the end
-                sendEmail("remov",username,result['useremail'])
+                sendEmail("remov",username,result[0]['useremail'])
             
     
     # out = sp.run(["php","sysop.php"],stdout=sp.PIPE)
@@ -251,49 +257,55 @@ def inputcourses():
         if func == "Submit":
             # get infos for a course from POST
             term = request.form.get("term_month_year")
-            courseNum = request.form.get("course_num")
-            courseName = request.form.get("course_name")
+            coursenum = request.form.get("course_num")
+            coursename = request.form.get("course_name")
             instructor = request.form.get("instructor_assigned_name")
 
             # course infos should not be empty
-            if term == "" or courseNum == "" or courseName == "" or instructor == "":
+            if term == "" or coursenum == "" or coursename == "" or instructor == "":
                 flash(Markup("<font color=\"red\">Error: Please fill all the blanks to submit a course</font>"),"error")
                 return render_template("input.html")
 
             # get database connection
             con = db.get_db()
             # create query depends on input infos
-            query = ("INSERT INTO courses (term,courseNum, " 
-            "courseName, instructor) values"
-            "('{}','{}','{}','{}')").format(term,courseNum,courseName, instructor)
+            query = ("INSERT INTO courses (term,coursenum, " 
+            "coursename, instructor) values"
+            "('{}','{}','{}','{}')").format(term,coursenum,coursename, instructor)
 
             print(query)
             # execute query
             try:
                 con.execute(query)
                 con.commit()
-                flash(Markup("Add Course <i>{}</i> successfully".format(courseNum)))
+                flash(Markup("Add Course <i>{}</i> successfully".format(coursenum)))
             except Exception as e:
                 print(str(e))
-                flash(Markup("<font color=\"red\">Error: Course already exists</font>"),"error")
+                #flash(Markup("<font color=\"red\">Error: Course already exists</font>"),"error")
+                flash(Markup("<font color=\"red\">Error: {}</font>".format(str(e))),"error")
 
     return render_template("input.html")
 
 def parseCSV(filePath):
     # CVS Column Names
-    col_names = ['term','courseNum','courseName', 'instructor']
+    col_names = ['term','coursenum','coursename', 'instructor']
     # Use Pandas to parse the CSV file
     csvData = pandas.read_csv(filePath,names=col_names, header=None)
     # Loop through the Rows
     for i,row in csvData.iterrows():
-        query = ("INSERT INTO courses (term,courseNum, " 
-        "courseName, instructor) values"
-        "('{}','{}','{}','{}')").format(row['term'],row['courseNum'],row['courseName'], row['instructor'])
+        if i == 0:
+            continue
+        query = ("INSERT INTO courses (term,coursenum, " 
+        "coursename, instructor) values"
+        "('{}','{}','{}','{}')").format(row['term'],row['coursenum'],row['coursename'], row['instructor'])
         # get database connection
         con = db.get_db()
-        con.execute(query)
-        con.commit()
-        print(i,row['term'],row['courseNum'],row['courseName'],row['instructor'])
+        try:
+            con.execute(query)
+            con.commit()
+            print(i,query)
+        except Exception as e:
+            print(str(e))
 
 def sendEmail(type,username,receiver_email):
     port = 587  # For starttls
@@ -314,8 +326,12 @@ def sendEmail(type,username,receiver_email):
     msg['From'] = sender_email
     msg['To'] = receiver_email
     context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server, port) as server:
-        server.starttls(context=context)
-        server.login(sender_email, password)
-        server.send_message(msg)
-        server.quit()
+
+    try:
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.send_message(msg)
+            server.quit()
+    except Exception as e:
+        print(str(e))

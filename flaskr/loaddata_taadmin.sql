@@ -16,12 +16,6 @@ INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2022', 'C
 INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2021', 'COMP307', '260000000', 1);
 INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2022', 'COMP307', '260000002', 1);
 
--- taassignmnet
-INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2022', 'COMP307', '260000000', 1);
-INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2022', 'COMP307', '260000001', 1);
-INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2021', 'COMP307', '260000000', 1);
-INSERT INTO taassignment (term, coursenum, tid, active) VALUES ('Winter2022', 'COMP307', '260000002', 1);
-
 -- talog
 INSERT INTO talog (logid, term, coursenum, tid, tname, comments, datetime) VALUES (1, 'Winter2022', 'COMP307', '260000000', 'Claire', 'Responsible TA.', null);
 INSERT INTO talog (logid, term, coursenum, tid, tname, comments, datetime) VALUES (2, 'Winter2022', 'COMP307', '260000000', 'Claire', 'Very responsible TA.', null);

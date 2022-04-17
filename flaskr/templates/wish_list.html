@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../../../static/style.css">
+    </head>
+    <body>
+        <!-- header --> 
+        <div class="row" style="background:#579a88; height: auto;">
+            <div class="col-1 col-s-1"></div>
+            <div class="col-5 col-s-10" style="align-items:center; padding: 15px;">
+                <img align="left" img src="../../../static/McGill-CS.png" width="100%" height="auto">
+            </div>
+            <div class="col-5 hidden-small" style="padding: 35px;" height="auto">
+                <h1 align="center" style="color: white;">TA Management</h1>
+            </div>
+            <div class="col-1 col-s-1"></div>
+        </div>
+        <div class="row" style="background:#63ae9a; height: auto;">
+            <div class="hidden-large col-s-1"></div>
+            <div class="hidden-large col-s-10" style="align-items:center; padding: 15px;" height="auto">
+                <h2 align="center" style="color: white;">TA Management</h2>
+            </div>
+            <div class="hidden-large col-s-1"></div>
+        </div>
+
+        <div class="row" style="background:#b2e1d4; height:auto">
+            <div class="col-1 col-s-1"></div>
+            <div class="col-10 col-s-10 topnav" style="align-items:center;">
+                <a href="perfor_log"><font size="4"><b>TA performance log&emsp;&emsp;</b></font></a>
+                <a href="wish_list"><font size="4"><b>TA wish-list&emsp;&emsp;</b></font></a>
+                
+                <!-- dropdown ta list-->
+                <div class="dropdown" style="margin-left: 50%;">
+                    <button class="dropbtn"><font size="4"><b>Choose a TA</b></font>
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        {% with messages = get_flashed_messages(category_filter=["ta"]) %}
+                        {% if messages %}
+                            {% for message in messages %}
+                            {{ message }}
+                            {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 col-s-1"></div>
+        </div>
+        <br>
+
+        <div class="row" style="height:auto">
+            <div class="col-1 col-s-1"></div>
+            <div class="col-10 col-s-10">
+                <h2>Course: {{term}} {{coursenum}}&emsp;&emsp; TA: {{tname}}</h2></div>
+            <div class="col-1 col-s-1"></div>
+        </div>
+        <!-- comments area -->
+        <div class="row" style="height:auto">
+            <div class="col-1 col-s-1"></div>
+            <div class="col-10 col-s-10">
+                <form method="POST">
+                    <table>
+                        <tr>
+                            <td><label style="font-size:large;">Add to Wist List:</label></td>
+                            <td><input type="submit" name="submit" value="Submit"></td>
+                        </tr>
+                    </table>    
+                </form>
+            </div>    
+            <div class="col-1 col-s-1"></div>
+        </div>
+        <!-- error msg -->
+        <div class="row">
+            <div class="col-1 col-s-1"></div>
+            <div class="col-10 col-s-10">
+                {% with messages = get_flashed_messages(category_filter=["error"]) %}
+                {% if messages %}
+                    {% for message in messages %}
+                    <p>{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div class="col-1 col-s-1"></div>
+        </div>
+
+
+        <br><br><br>
+        <!-- footer -->
+        <div class="row footer">
+            <div class="col-1 col-s-1"></div>
+            <div class="col-7 col-s-5" style="padding-top: 15px;">
+                <a><b>Back to Dashboard</b></a>
+            </div>
+            <div class="col-3 col-s-5" style="align-items: center; padding: 10px;">
+                <font color="#b2e1d4" size="2">
+                    <div align="right">
+                        Copyright @ 2022.<br>
+                        All Rights Reserved.
+                    </div>
+                </font>
+            </div>
+        </div>
+    </body>
+</html>

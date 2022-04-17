@@ -2,6 +2,13 @@ DROP TABLE IF EXISTS userAccounts;
 DROP TABLE IF EXISTS courses;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS registeredTable;
+DROP TABLE IF EXISTS studenttarating;
+DROP TABLE IF EXISTS talog;
+DROP TABLE IF EXISTS wishlist;
+DROP TABLE IF EXISTS tacohort;
+DROP TABLE IF EXISTS taassignment;
+DROP TABLE IF EXISTS taapplication;
+DROP TABLE IF EXISTS tahistory;
 
 CREATE TABLE userAccounts (
     username VARCHAR(20) PRIMARY KEY,
@@ -18,9 +25,9 @@ create table courses
 (
     term       VARCHAR(20) not null,
     coursenum  VARCHAR(10) not null,
-    coursetype VARCHAR(20) not null,
-    coursename VARCHAR(50) not null,
-    instructor VARCHAR(50) not null,
+    coursetype VARCHAR(20) ,
+    coursename VARCHAR(100) not null,
+    instructor VARCHAR(100) not null,
     enrollnum  integer default '0',
     taquota    integer,
     constraint courses_pk
@@ -38,10 +45,11 @@ CREATE TABLE users(
 
 CREATE TABLE registeredTable(
     userid INTEGER,
-    courseNum VARCHAR(10),
-    PRIMARY KEY (userid,courseNum),
+    coursenum VARCHAR(10),
+    term VARCHAR(20),
+    PRIMARY KEY (userid,coursenum,term),
     FOREIGN KEY(userid) REFERENCES users(userid),
-    FOREIGN KEY(courseNum) REFERENCES courses(courseNum)
+    FOREIGN KEY(coursenum,term) REFERENCES courses(coursenum,term)
 );
 
 create table studenttarating
@@ -59,9 +67,9 @@ create table studenttarating
 
 create table talog
 (
-    logid     int
+    logid     INTEGER
         constraint talog_pk
-            primary key,
+            primary key AUTOINCREMENT,
     term      varchar(10),
     coursenum varchar(10),
     tid       varchar(10),
@@ -69,15 +77,15 @@ create table talog
         constraint talog_tacohort_tname_fk
             references tacohort (tname),
     comments  Varchar(500),
-    datetime  datetime,
+    datetime  datetime DEFAULT CURRENT_TIMESTAMP,
     foreign key (term, coursenum, tid) references taassignment
 );
 
 create table wishlist
 (
-    wlid      int
+    wlid      INTEGER
         constraint wishlist_pk
-            primary key,
+            primary key AUTOINCREMENT,
     term      varchar(10),
     coursenum varchar(10)
         constraint wishlist_courses_coursenum_fk
@@ -179,3 +187,6 @@ create table tahistory
     email      varchar(50),
     feedback   varchar(100)
 );
+
+
+

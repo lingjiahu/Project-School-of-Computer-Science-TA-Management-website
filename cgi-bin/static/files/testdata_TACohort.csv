@@ -1,0 +1,7 @@
+"term_month_year","TA_name","student_ID","legal_name","email","grad_ugrad","supervisor_name","priority","hours","date_applied","location","phone","degree","courses_applied_for","open_to_other_courses","notes"
+"Winter2021","Claire","260000000","Youyou Yang","youyou.yang@mail.mcgill.ca","TRUE","Joseph V","TRUE","90","2020-12-01","Canada","5140000000","Bachelor of Science","COMP307","TRUE","good"
+"Winter2022","Claire","260000000","Youyou Yang","youyou.yang@mail.mcgill.ca","TRUE","Joseph V","TRUE","180","2021-12-01","Canada","5140000000","Bachelor of Science","COMP307","TRUE","good"
+"Winter2022","Alice","260000001","Alice Pan","alice.pan@mail.mcgill.ca","TRUE","Joseph V","","180","2021-12-01","Canada","5140000001","Bachelor of Science","COMP307, COMP421","TRUE","very good"
+"Winter2022","Ruby","260000002","Ruaby","ruaby@mail.mcgill.ca","TRUE","Joseph V","TRUE","90","2021-12-01","Canada","5150000002","Bachelor of Science","COMP307, CHEM181","TRUE","great"
+"Winter2022","Xingyi","260000003","Xingyi Wang","xingyi.wang@mail.mcgill.ca","TRUE","Joseph V","TRUE","90","2021-12-01","Canada","5140000003","Bachelor of Science","COMP307","TRUE","very very good"
+"Winter2022","Qiqi","260000004","Qiqi Su","qq.s@mail.mcgill.ca","TRUE","Joseph V","TRUE","90","2021-12-01","Canada","5140000004","Bachelor of Science","COMP307","FALSE",""

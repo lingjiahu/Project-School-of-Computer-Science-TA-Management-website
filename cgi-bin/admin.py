@@ -1,3 +1,4 @@
+import csv
 import os
 import sqlite3
 from flask import Blueprint, render_template, request, flash, Markup, current_app, g, redirect, url_for
@@ -572,21 +573,25 @@ adminimport.methods=["GET", "POST"]
 
 def parseQuota(filePath):
     try:
-        # CSV Column Names
-        col_names = ['term','coursenum', 'coursetype', 'coursename', 'instructor', 'enrollnum', 'taquota']
-        # Use Pandas to parse the CSV file
-        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+        # read CSV
+        file = open(filePath)
+        csvData = csv.reader(file)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
         return
     try: 
-        for i,row in csvData.iterrows():            # iterate through all rows
-            values = getvalues(row)
+        firstrow = True
+        for row in csvData:            # iterate through all rows
+            if (firstrow):              # skip first row (column names)
+                firstrow = False
+                continue
+            if not len(row) == 0:   # skip empty rows
+                values = getvalues(row)
             query = ("REPLACE INTO courses (term, coursenum,coursetype, coursename, instructor, enrollnum, taquota) values (?, ?, ?, ?, ?, ?, ?)")
             con = db.get_db()
             con.execute(query, values)
-            con.commit()
+        con.commit()
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
@@ -595,18 +600,22 @@ def parseQuota(filePath):
 
 def parseCohort(filePath):
     try:
-        # CSV Column Names
-        col_names = ['term','tname', 'tid', 'legalname', 'email', 'ugrad', 'supervisor', 'priority', 'hours', 'applieddate', 'location', 'phone', 'degree', 'coursesapplied', 'flexible', 'notes']
-        # Use Pandas to parse the CSV file
-        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+        # read CSV
+        file = open(filePath)
+        csvData = csv.reader(file)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
         return
     # Loop through the Rows
     try:
-        for i,row in csvData.iterrows():            # iterate through all rows
-            values = getvalues(row)
+        firstrow = True
+        for row in csvData:            # iterate through all rows
+            if (firstrow):              # skip first row (column names)
+                firstrow = False
+                continue
+            if not len(row) == 0:   # skip empty rows
+                values = getvalues(row)
             query = ("REPLACE INTO tacohort (term, tname, tid, legalname, email, ugrad, supervisor, priority, hours, applieddate, location, phone, degree, coursesapplied, flexible, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
             con = db.get_db()
             con.execute(query, values)
@@ -619,22 +628,26 @@ def parseCohort(filePath):
 
 def parseUgrad(filePath):
     try:
-        # CSV Column Names
-        col_names = ['jobapp','studentid','legalname', 'mcgillemail', 'degreeyear', 'preferences', 'previous', 'legalworker', 'country', 'email', 'dateapplied', 'location', 'phone', 'field', 'numcoursesapplied', 'lastcourse', 'course1', 'course1unit', 'course2', 'course2unit', 'totalunits', 'assignment', 'recnotes', 'notes']
-        # Use Pandas to parse the CSV file  
-        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+        # read CSV
+        file = open(filePath)
+        csvData = csv.reader(file)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
         return
 
     try:
-        for i,row in csvData.iterrows():    # iterate through all rows
-            values = getvalues(row)
+        firstrow = True
+        for row in csvData:            # iterate through all rows
+            if (firstrow):              # skip first row (column names)
+                firstrow = False
+                continue
+            if not len(row) == 0:   # skip empty rows
+                values = getvalues(row)
             query = ("replace INTO taapplication (jobapp, studentid, legalname, mcgillemail, degreeyear, preferences, previous, legalworker, country, email, dateapplied, location, phone, field, numcoursesapplied, lastcourse, course1, course1unit, course2, course2unit, totalunits, assignment, recnotes, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
             con = db.get_db()
             con.execute(query, values)
-            con.commit()
+        con.commit()
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data.</font>"))
@@ -643,18 +656,22 @@ def parseUgrad(filePath):
 
 def parseGrad(filePath):
     try:
-        # CSV Column Names
-        col_names = ['jobapp','studentid','legalname', 'mcgillemail', 'supervisor', 'priority', 'hrs180', 'previousworker', 'legalworker', 'country', 'email', 'dateapplied', 'location', 'phone', 'degreeyear', 'coursesapplied', 'flexible', 'field','expsummary', 'previous', 'numcoursesapplied', 'appin', 'lastcourse', 'course1', 'course1unit', 'course2', 'course2unit', 'totalunits', 'assignment', 'status', 'notes', 'diff']
-        # Use Pandas to parse the CSV file
-        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+        # read CSV
+        file = open(filePath)
+        csvData = csv.reader(file)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
         return
 
     try: 
-        for i,row in csvData.iterrows():            # iterate through all rows
-            values = getvalues(row)
+        firstrow = True
+        for row in csvData:            # iterate through all rows
+            if (firstrow):              # skip first row (column names)
+                firstrow = False
+                continue
+            if not len(row) == 0:   # skip empty rows
+                values = getvalues(row)
             query = ("REPLACE INTO taapplication (jobapp, studentid, legalname, mcgillemail, supervisor, priority, hrs180, previousworker,  legalworker, country, email, dateapplied, location, phone, degreeyear, coursesapplied, flexible, field, expsummary, previous, numcoursesapplied, appin, lastcourse, course1, course1unit, course2, course2unit, totalunits, assignment, status, notes, diff) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
             con = db.get_db()
             con.execute(query, values)
@@ -667,17 +684,21 @@ def parseGrad(filePath):
 
 def parseHistory(filePath):
     try:
-        # CSV Column Names
-        col_names = ['idlu','term','coursenum', 'units', 'tname', 'degree', 'supervisor', 'id', 'email', 'feedback']
-        # Use Pandas to parse the CSV file
-        csvData = pandas.read_csv(filePath,names=col_names, skiprows=1)
+        # read CSV
+        file = open(filePath)
+        csvData = csv.reader(file)
     except Exception as e:
         print(str(e))
         flash(Markup("<font color=\"red\">Error: Upload Failed. Please validate input data format.</font>"))
         return
     try: 
-        for i,row in csvData.iterrows():            # iterate through all rows
-            values = getvalues(row)
+        firstrow = True
+        for row in csvData:            # iterate through all rows
+            if (firstrow):              # skip first row (column names)
+                firstrow = False
+                continue
+            if not len(row) == 0:   # skip empty rows
+                values = getvalues(row)
             query = ("REPLACE INTO tahistory (idlu, term, coursenum, units, tname, degree, supervisor, id, email, feedback) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
             con = db.get_db()
             con.execute(query, values)

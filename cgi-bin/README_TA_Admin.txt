@@ -1,8 +1,3 @@
-TODO for TA Admin:
-1. test schema, load data once all done
-2. add role
-3. return to dashboard tbi
-
 TA Administration Section (Orange): TA Info, Course TA Info, Update TA Info, Import (includes Bonus)
 Navigate to different sections by clicking on the corresponding tab.
 
@@ -102,7 +97,7 @@ Update TA Info:
         c. 260000010, Winter2022, Winter2021: Failure case due to no matching TA record.
     7. Update TA Student ID:
         a. Winter2022, 260000002, 260000011: Successful case.
-        b. Winter2022, 260000000, 260000001: Failure case due to conflicting TA record.
+        b. Winter2022, 260000002, 260000001: Failure case due to conflicting TA record.
         c. Winter2022, 260000010, 260000011: Failure case due to no matching TA record.
     8. empty input: Failure case.
 

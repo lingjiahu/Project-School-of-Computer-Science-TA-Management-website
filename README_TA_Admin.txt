@@ -101,7 +101,7 @@ Update TA Info:
         b. 260000000, Winter2022, Winter2021: Failure case due to conflicting TA record.
         c. 260000010, Winter2022, Winter2021: Failure case due to no matching TA record.
     7. Update TA Student ID:
-        a. Winter2022, 260000000, 260000011: Successful case.
+        a. Winter2022, 260000002, 260000011: Successful case.
         b. Winter2022, 260000000, 260000001: Failure case due to conflicting TA record.
         c. Winter2022, 260000010, 260000011: Failure case due to no matching TA record.
     8. empty input: Failure case.
